@@ -1,150 +1,143 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Juegos Boti</title>
-  <!-- Open Graph tags for Discord (no image) -->
-  <meta property="og:title" content="Juegos Boti">
-  <meta property="og:description" content="Descarga tus juegos favoritos!">
+    <!-- Open Graph tags for Discord (no image) -->
+  <meta property="og:title" content="Boti Studios">
+  <meta property="og:description" content="Juegos creados por nosotros.">
   <meta property="og:url" content="https://juegosboti.xyz">
   <meta property="og:type" content="website">
 
   <!-- Optional Twitter cards without image -->
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Juegos Boti">
-  <meta name="twitter:description" content="Descarga tus juegos favoritos como Garry's Mod y CS2.">
-</head>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background-color: #111;
-      color: #fff;
-    }
+  <meta name="twitter:description" content="Juegos creados por nosotros.">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boti Studios - Juegos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Reset básico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
 
-    .top-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 20px;
-      background-color: #ff7a00;
-    }
+        body {
+            background: #f5f5f5;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-    .title {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #ffffff;
-    }
+        /* Topbar */
+        .topbar {
+            width: 100%;
+            background: #1e1e1e;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+            font-size: 2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
 
-    .search-bar input {
-      padding: 8px 12px;
-      border: none;
-      border-radius: 4px;
-      font-size: 1rem;
-      outline: none;
-      width: 200px;
-    }
+        /* Subtítulo */
+        .subtitle {
+            margin: 30px 0 50px 0;
+            font-size: 1.5rem;
+            color: #555;
+            text-align: center;
+            animation: fadeInUp 1s ease forwards;
+        }
 
-    .games-container {
-      display: flex;
-      flex-wrap: wrap;
-      padding: 20px;
-      gap: 20px;
-      justify-content: center;
-    }
+        /* Contenedor de juegos */
+        .games-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
 
-    .game-card {
-      background-color: #1a1a1a;
-      border: 2px solid #ff7a00;
-      border-radius: 8px;
-      width: 200px;
-      text-align: center;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
+        /* Caja de juego */
+        .game-card {
+            background: #fff;
+            width: 300px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            animation: fadeIn 1.2s ease forwards;
+        }
 
-    .game-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 0 15px #ff7a00;
-    }
+        .game-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 30px rgba(0,0,0,0.25);
+        }
 
-    .game-card img {
-      width: 100%;
-      border-top-left-radius: 6px;
-      border-top-right-radius: 6px;
-    }
+        .game-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
 
-    .game-card p {
-      margin: 10px 0;
-      font-size: 1.1rem;
-    }
+        .game-card h3 {
+            text-align: center;
+            padding: 15px;
+            font-size: 1.2rem;
+            color: #333;
+        }
 
-    .download-btn {
-      margin: 10px;
-      padding: 8px 12px;
-      background-color: #ff7a00;
-      border: none;
-      border-radius: 4px;
-      color: #111;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
+        /* Animaciones */
+        @keyframes fadeIn {
+            0% {opacity: 0; transform: translateY(20px);}
+            100% {opacity: 1; transform: translateY(0);}
+        }
 
-    .download-btn:hover {
-      background-color: #ff9500;
-    }
-  </style>
+        @keyframes fadeInUp {
+            0% {opacity: 0; transform: translateY(40px);}
+            100% {opacity: 1; transform: translateY(0);}
+        }
+
+        /* Responsive */
+        @media (max-width: 500px) {
+            .game-card {
+                width: 90%;
+            }
+
+            .topbar {
+                font-size: 1.5rem;
+            }
+
+            .subtitle {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="topbar">Boti Studios</div>
+    <div class="subtitle">Juegos que creamos.</div>
 
-  <div class="top-bar">
-    <div class="title">Juegos Boti</div>
-    <div class="search-bar">
-      <input type="text" id="search" placeholder="Buscar juegos..." onkeyup="filterGames()">
+    <div class="games-container">
+        <div class="game-card">
+            <img src="https://static.wixstatic.com/media/bcc93e_90cfaae0b5684d98b09911eaa61d939f~mv2.png/v1/fill/w_298,h_378,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/miperro.png" alt="Oreo Clicker">
+            <h3>Oreo Clicker</h3>
+        </div>
+
+        <div class="game-card">
+            <img src="https://files.catbox.moe/qpug9h.jpeg" alt="Epstein Clicker">
+            <h3>Epstein Clicker</h3>
+        </div>
     </div>
-  </div>
-
-  <div class="games-container" id="gamesContainer">
-    <div class="game-card">
-      <img src="https://files.catbox.moe/jjnaar.jfif" alt="Garry's Mod">
-      <p>Garry's Mod</p>
-      <button class="download-btn" onclick="downloadGame('https://files.catbox.moe/r91wl8.zip')">Descargar</button>
-    </div>
-    <div class="game-card">
-      <img src="https://www.hotspawn.com/wp-content/uploads/2025/01/cs2.jpg" alt="Counter-Strike 2">
-      <p>Counter-Strike 2</p>
-      <button class="download-btn" onclick="downloadGame('https://files.catbox.moe/83avwc.zip')">Descargar</button>
-    </div>
-  </div>
-
-  <script>
-    function filterGames() {
-      const query = document.getElementById('search').value.toLowerCase();
-      const games = document.querySelectorAll('.game-card');
-
-      games.forEach(game => {
-        const title = game.querySelector('p').textContent.toLowerCase();
-        game.style.display = title.includes(query) ? 'flex' : 'none';
-      });
-    }
-
-    function downloadGame(url) {
-      Swal.fire({
-        icon: 'success',
-        title: 'Listo',
-        text: 'Descargando el juego...',
-        confirmButtonText: 'OK'
-      }).then(() => {
-        window.location.href = url; // Redirect to download after OK
-      });
-    }
-  </script>
-
 </body>
 </html>
-
