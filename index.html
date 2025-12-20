@@ -1,1 +1,150 @@
+<!DOCTYPE html> 
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Juegos Boti</title>
+  <!-- Open Graph tags for Discord (no image) -->
+  <meta property="og:title" content="Juegos Boti">
+  <meta property="og:description" content="Descarga tus juegos favoritos!">
+  <meta property="og:url" content="https://juegosboti.xyz">
+  <meta property="og:type" content="website">
+
+  <!-- Optional Twitter cards without image -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Juegos Boti">
+  <meta name="twitter:description" content="Descarga tus juegos favoritos como Garry's Mod y CS2.">
+</head>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #111;
+      color: #fff;
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background-color: #ff7a00;
+    }
+
+    .title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .search-bar input {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      outline: none;
+      width: 200px;
+    }
+
+    .games-container {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 20px;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .game-card {
+      background-color: #1a1a1a;
+      border: 2px solid #ff7a00;
+      border-radius: 8px;
+      width: 200px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .game-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 15px #ff7a00;
+    }
+
+    .game-card img {
+      width: 100%;
+      border-top-left-radius: 6px;
+      border-top-right-radius: 6px;
+    }
+
+    .game-card p {
+      margin: 10px 0;
+      font-size: 1.1rem;
+    }
+
+    .download-btn {
+      margin: 10px;
+      padding: 8px 12px;
+      background-color: #ff7a00;
+      border: none;
+      border-radius: 4px;
+      color: #111;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .download-btn:hover {
+      background-color: #ff9500;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <div class="title">Juegos Boti</div>
+    <div class="search-bar">
+      <input type="text" id="search" placeholder="Buscar juegos..." onkeyup="filterGames()">
+    </div>
+  </div>
+
+  <div class="games-container" id="gamesContainer">
+    <div class="game-card">
+      <img src="https://files.catbox.moe/jjnaar.jfif" alt="Garry's Mod">
+      <p>Garry's Mod</p>
+      <button class="download-btn" onclick="downloadGame('https://files.catbox.moe/r91wl8.zip')">Descargar</button>
+    </div>
+    <div class="game-card">
+      <img src="https://www.hotspawn.com/wp-content/uploads/2025/01/cs2.jpg" alt="Counter-Strike 2">
+      <p>Counter-Strike 2</p>
+      <button class="download-btn" onclick="downloadGame('https://files.catbox.moe/83avwc.zip')">Descargar</button>
+    </div>
+  </div>
+
+  <script>
+    function filterGames() {
+      const query = document.getElementById('search').value.toLowerCase();
+      const games = document.querySelectorAll('.game-card');
+
+      games.forEach(game => {
+        const title = game.querySelector('p').textContent.toLowerCase();
+        game.style.display = title.includes(query) ? 'flex' : 'none';
+      });
+    }
+
+    function downloadGame(url) {
+      Swal.fire({
+        icon: 'success',
+        title: 'Listo',
+        text: 'Descargando el juego...',
+        confirmButtonText: 'OK'
+      }).then(() => {
+        window.location.href = url; // Redirect to download after OK
+      });
+    }
+  </script>
+
+</body>
+</html>
 
