@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Error 404</title>
+  <style>
+    @keyframes glitch {
+      0% { text-shadow: 2px 0 red, -2px 0 cyan; }
+      20% { text-shadow: -2px 0 red, 2px 0 cyan; }
+      40% { text-shadow: 2px 2px red, -2px -2px cyan; }
+      60% { text-shadow: -2px -2px red, 2px 2px cyan; }
+      80% { text-shadow: 2px 0 red, -2px 0 cyan; }
+      100% { text-shadow: none; }
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at center, #111 0%, #000 70%);
+      color: #00ffcc;
+      font-family: "Courier New", monospace;
+      font-size: 1.8rem;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+
+    .glitch {
+      animation: glitch 1.5s infinite;
+    }
+  </style>
+</head>
+<body>
+  <div class="glitch">
+    Error 404 ¿Seguro esta página es la que buscas?
+  </div>
+</body>
+</html>
