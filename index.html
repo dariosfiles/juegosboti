@@ -1,71 +1,142 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Cargando...</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: Arial, Helvetica, sans-serif;
-            color: #fff;
-        }
+<meta charset="UTF-8">
+<title>Elegir juego</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    cursor: url("https://files.catbox.moe/5uebbf.cur"), auto; /* Cursor funcional global */
+}
 
-        .container {
-            text-align: center;
-        }
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-        .logo {
-            max-width: 300px;
-            width: 80%;
-            margin-bottom: 30px;
-        }
+.screen {
+    text-align: center;
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+    display: none;
+}
 
-        .loader {
-            width: 60px;
-            height: 60px;
-            border: 6px solid #444;
-            border-top: 6px solid #fff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px auto;
-        }
+.screen.active {
+    display: block;
+}
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+.title {
+    font-size: 20px;
+    margin-bottom: 30px;
+}
 
-        .text {
-            font-size: 16px;
-            opacity: 0.9;
-        }
-    </style>
+.btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    margin: 12px 0;
+    font-size: 16px;
+    background: #111;
+    color: #fff;
+    border: 1px solid #444;
+    transition: background 0.2s;
+    cursor: inherit; /* Usar el cursor definido globalmente */
+}
+
+.btn:hover {
+    background: #222;
+}
+
+.logo {
+    max-width: 280px;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.loader {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 20px auto;
+    border-radius: 50%;
+    border: 5px solid #333;
+    border-top: 5px solid #fff;
+    animation: spin 1s linear infinite;
+}
+
+.text {
+    font-size: 15px;
+    opacity: 0.9;
+}
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+}
+</style>
 </head>
 <body>
 
-    <div class="container">
-        <img 
-            src="https://static.grupojoly.com/clip/4b0f121f-5533-4398-9f0a-d3c8f24938bd_source-aspect-ratio_1600w_0.jpg" 
-            alt="Logo"
-            class="logo"
-        >
-        <div class="loader"></div>
-        <div class="text">Buscando URL nueva del juego...</div>
-    </div>
+<!-- SELECCIÓN -->
+<div class="screen active" id="menu">
+    <div class="title">Elige un juego</div>
+    <button class="btn" onclick="startEpstein()">Epstein Clicker</button>
+    <button class="btn" onclick="startOreo()">Oreo Clicker</button>
+</div>
 
-    <script>
-        setTimeout(function () {
-            window.location.href = "https://juegosboti.xyz/clicker";
-        }, 4000);
-    </script>
+<!-- CARGA -->
+<div class="screen" id="loading">
+    <img
+        id="loadingImage"
+        class="logo"
+        src="https://static.grupojoly.com/clip/4b0f121f-5533-4398-9f0a-d3c8f24938bd_source-aspect-ratio_1600w_0.jpg"
+        alt="Imagen"
+    >
+    <div class="loader"></div>
+    <div class="text">
+        Buscando URL nueva del juego<span id="dots">...</span>
+    </div>
+</div>
+
+<script>
+const menu = document.getElementById("menu");
+const loading = document.getElementById("loading");
+const image = document.getElementById("loadingImage");
+const dots = document.getElementById("dots");
+
+let dotCount = 0;
+setInterval(() => {
+    dotCount = (dotCount + 1) % 4;
+    dots.textContent = ".".repeat(dotCount);
+}, 500);
+
+function startEpstein() {
+    menu.classList.remove("active");
+    loading.classList.add("active");
+    image.style.display = "block";
+
+    setTimeout(() => {
+        window.location.href = "https://juegosboti.xyz/clicker";
+    }, 4000);
+}
+
+function startOreo() {
+    menu.classList.remove("active");
+    loading.classList.add("active");
+    image.style.display = "none";
+
+    setTimeout(() => {
+        window.location.href = "https://juegosboti.xyz/oreo";
+    }, 4000);
+}
+</script>
 
 </body>
 </html>
