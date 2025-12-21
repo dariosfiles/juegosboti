@@ -79,18 +79,25 @@ const shopBtn = document.getElementById('shopBtn');
 const achBtn = document.getElementById('achBtn');
 const body = document.body;
 
+// Estado
 let clicks = parseInt(localStorage.getItem('epsteinClicks')) || 0;
 let islaComprada = localStorage.getItem('islaComprada') === 'true';
 let niñosCount = parseInt(localStorage.getItem('niñosCount')) || 0;
+let asistentesCount = parseInt(localStorage.getItem('asistentesCount')) || 0;
+let epsteinPrimeComprado = localStorage.getItem('epsteinPrime') === 'true';
 
 updateCounter();
+if(epsteinPrimeComprado) image.src = 'https://files.catbox.moe/7qsf1t.PNG';
 
 document.addEventListener('contextmenu', e => e.preventDefault());
 
+/* ---------- CLICK ---------- */
 image.addEventListener('click', e => {
-    clicks++;
+    let clicksPorClick = 1;
+    if(epsteinPrimeComprado) clicksPorClick = 10;
+    clicks += clicksPorClick;
     updateCounter();
-    spawnParticles(e.clientX, e.clientY);
+    spawnParticles(e.clientX,e.clientY);
 });
 
 function spawnParticles(x,y){
@@ -113,9 +120,11 @@ function updateCounter(){
     localStorage.setItem('epsteinClicks',clicks);
 }
 
-/* -------- TIENDA -------- */
+/* ---------- TIENDA ---------- */
 shopBtn.addEventListener('click',()=>{
     const precioNiño = 15 * Math.pow(2, niñosCount);
+    const precioAsistente = 5 * Math.pow(1.5, asistentesCount);
+    const precioPrime = 5000;
 
     Swal.fire({
         title:'Tienda',
@@ -124,36 +133,46 @@ shopBtn.addEventListener('click',()=>{
         html:`
         <div style="text-align:left">
 
+            <!-- Isla -->
             <div style="margin-bottom:15px">
                 <strong>Isla</strong><br>
                 <small>Da clicks automáticos cada 5 segundos</small><br>
-                ${
-                    islaComprada
-                    ? '<span style="color:#4caf50;font-weight:bold;">Ya comprado</span>'
-                    : '<button id="buyIsla" class="shop-button">Comprar - 300 clicks</button>'
-                }
+                ${islaComprada ? '<span style="color:#4caf50;font-weight:bold;">Ya comprado</span>'
+                : '<button id="buyIsla" class="shop-button">Comprar - 300 clicks</button>'}
             </div>
 
-            <div>
+            <!-- Niño -->
+            <div style="margin-bottom:15px">
                 <strong>Niño</strong><br>
-                <small>
-                    Te da 1 click por segundo.<br>
-                    Tienes <b>${niñosCount}</b> niños.
-                </small><br>
-                <button id="buyNiño" class="shop-button">
-                    Comprar - ${precioNiño} clicks
-                </button>
+                <small>Te da 1 click por segundo.<br>Tienes <b>${niñosCount}</b> niños.</small><br>
+                <button id="buyNiño" class="shop-button">Comprar - ${precioNiño} clicks</button>
+            </div>
+
+            <!-- Asistente -->
+            <div style="margin-bottom:15px">
+                <strong>Asistente</strong><br>
+                <small>Te da 1 click por segundo.<br>Tienes <b>${asistentesCount}</b> asistentes.</small><br>
+                <button id="buyAsistente" class="shop-button">Comprar - ${Math.floor(precioAsistente)} clicks</button>
+            </div>
+
+            <!-- Epstein Prime -->
+            <div style="margin-bottom:15px">
+                <strong>Epstein Prime</strong><br>
+                <small>Tu Epstein entra en su prime</small><br>
+                ${epsteinPrimeComprado
+                ? '<span style="color:#4caf50;font-weight:bold;">Ya comprado</span>'
+                : `<button id="buyPrime" class="shop-button">Comprar - ${precioPrime} clicks</button>`}
             </div>
 
         </div>
         `,
         didOpen:()=>{
+            // Isla
             const islaBtn=document.getElementById('buyIsla');
             if(islaBtn){
                 islaBtn.onclick=()=>{
                     if(clicks>=300){
-                        clicks-=300;
-                        islaComprada=true;
+                        clicks-=300; islaComprada=true;
                         localStorage.setItem('islaComprada','true');
                         updateCounter();
                         startIsla();
@@ -161,21 +180,43 @@ shopBtn.addEventListener('click',()=>{
                     }
                 };
             }
-
+            // Niño
             document.getElementById('buyNiño').onclick=()=>{
                 if(clicks>=precioNiño){
-                    clicks-=precioNiño;
-                    niñosCount++;
+                    clicks-=precioNiño; niñosCount++;
                     localStorage.setItem('niñosCount',niñosCount);
                     updateCounter();
                     Swal.fire('Comprado','','success');
                 }
             };
+            // Asistente
+            document.getElementById('buyAsistente').onclick=()=>{
+                if(clicks>=precioAsistente){
+                    clicks-=precioAsistente; asistentesCount++;
+                    localStorage.setItem('asistentesCount',asistentesCount);
+                    updateCounter();
+                    Swal.fire('Comprado','','success');
+                }
+            };
+            // Epstein Prime
+            const primeBtn=document.getElementById('buyPrime');
+            if(primeBtn){
+                primeBtn.onclick=()=>{
+                    if(clicks>=precioPrime){
+                        clicks-=precioPrime; epsteinPrimeComprado=true;
+                        localStorage.setItem('epsteinPrime','true');
+                        // Cambia la imagen al instante
+                        image.src='https://files.catbox.moe/7qsf1t.PNG';
+                        updateCounter();
+                        Swal.fire('Epstein Prime desbloqueado!','','success');
+                    }
+                };
+            }
         }
     });
 });
 
-/* -------- LOGROS -------- */
+/* ---------- LOGROS ---------- */
 achBtn.addEventListener('click',()=>{
     const progPrincipiante=Math.min(clicks/5*100,100);
     const progIsla=islaComprada?100:0;
@@ -211,7 +252,7 @@ achBtn.addEventListener('click',()=>{
     });
 });
 
-/* -------- AUTO -------- */
+/* ---------- AUTO ---------- */
 function startIsla(){
     setInterval(()=>{
         clicks+=Math.floor(Math.random()*101);
@@ -221,10 +262,9 @@ function startIsla(){
 
 function startNiños(){
     setInterval(()=>{
-        if(niñosCount>0){
-            clicks+=niñosCount;
-            updateCounter();
-        }
+        if(niñosCount>0) clicks+=niñosCount;
+        if(asistentesCount>0) clicks+=asistentesCount;
+        updateCounter();
     },1000);
 }
 
