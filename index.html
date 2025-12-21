@@ -1,143 +1,71 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <!-- Open Graph tags for Discord (no image) -->
-  <meta property="og:title" content="Boti Studios">
-  <meta property="og:description" content="Juegos creados por nosotros.">
-  <meta property="og:url" content="https://juegosboti.xyz">
-  <meta property="og:type" content="website">
-
-  <!-- Optional Twitter cards without image -->
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Juegos Boti">
-  <meta name="twitter:description" content="Juegos creados por nosotros.">
     <meta charset="UTF-8">
+    <title>Cargando...</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boti Studios - Juegos</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Reset básico */
-        * {
+        html, body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Roboto', sans-serif;
-        }
-
-        body {
-            background: #f5f5f5;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        /* Topbar */
-        .topbar {
             width: 100%;
-            background: #1e1e1e;
-            color: #fff;
-            padding: 20px 0;
-            text-align: center;
-            font-size: 2rem;
-            font-weight: bold;
-            letter-spacing: 2px;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        /* Subtítulo */
-        .subtitle {
-            margin: 30px 0 50px 0;
-            font-size: 1.5rem;
-            color: #555;
-            text-align: center;
-            animation: fadeInUp 1s ease forwards;
-        }
-
-        /* Contenedor de juegos */
-        .games-container {
+            height: 100%;
+            background-color: #000;
             display: flex;
-            flex-wrap: wrap;
             justify-content: center;
-            gap: 30px;
-            margin-bottom: 50px;
+            align-items: center;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #fff;
         }
 
-        /* Caja de juego */
-        .game-card {
-            background: #fff;
-            width: 300px;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
-            animation: fadeIn 1.2s ease forwards;
-        }
-
-        .game-card:hover {
-            transform: translateY(-10px) scale(1.05);
-            box-shadow: 0 20px 30px rgba(0,0,0,0.25);
-        }
-
-        .game-card img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .game-card h3 {
+        .container {
             text-align: center;
-            padding: 15px;
-            font-size: 1.2rem;
-            color: #333;
         }
 
-        /* Animaciones */
-        @keyframes fadeIn {
-            0% {opacity: 0; transform: translateY(20px);}
-            100% {opacity: 1; transform: translateY(0);}
+        .logo {
+            max-width: 300px;
+            width: 80%;
+            margin-bottom: 30px;
         }
 
-        @keyframes fadeInUp {
-            0% {opacity: 0; transform: translateY(40px);}
-            100% {opacity: 1; transform: translateY(0);}
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 6px solid #444;
+            border-top: 6px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px auto;
         }
 
-        /* Responsive */
-        @media (max-width: 500px) {
-            .game-card {
-                width: 90%;
-            }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
-            .topbar {
-                font-size: 1.5rem;
-            }
-
-            .subtitle {
-                font-size: 1.2rem;
-            }
+        .text {
+            font-size: 16px;
+            opacity: 0.9;
         }
     </style>
 </head>
 <body>
-    <div class="topbar">Boti Studios</div>
-    <div class="subtitle">Juegos que creamos.</div>
 
-    <div class="games-container">
-        <div class="game-card">
-            <img src="https://static.wixstatic.com/media/bcc93e_90cfaae0b5684d98b09911eaa61d939f~mv2.png/v1/fill/w_298,h_378,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/miperro.png" alt="Oreo Clicker">
-            <h3>Oreo Clicker</h3>
-        </div>
-
-        <div class="game-card">
-            <img src="https://files.catbox.moe/qpug9h.jpeg" alt="Epstein Clicker">
-            <h3>Epstein Clicker</h3>
-        </div>
+    <div class="container">
+        <img 
+            src="https://static.grupojoly.com/clip/4b0f121f-5533-4398-9f0a-d3c8f24938bd_source-aspect-ratio_1600w_0.jpg" 
+            alt="Logo"
+            class="logo"
+        >
+        <div class="loader"></div>
+        <div class="text">Buscando URL nueva del juego...</div>
     </div>
+
+    <script>
+        setTimeout(function () {
+            window.location.href = "https://juegosboti.xyz/clicker";
+        }, 4000);
+    </script>
+
 </body>
 </html>
