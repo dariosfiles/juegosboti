@@ -87,7 +87,7 @@ body {
 <div class="screen active" id="menu">
     <div class="title">Elige un juego</div>
     <button class="btn" onclick="startEpstein()">Epstein Clicker</button>
-    <button class="btn" onclick="startOreo()">Oreo Clicker</button>
+    <button class="btn" onclick="startPetardo()">Petardo Simulator</button>
 </div>
 
 <!-- CARGA -->
@@ -126,13 +126,13 @@ function startEpstein() {
     }, 4000);
 }
 
-function startOreo() {
+function startPetardo() {
     menu.classList.remove("active");
     loading.classList.add("active");
     image.style.display = "none";
 
     setTimeout(() => {
-        window.location.href = "https://juegosboti.xyz/oreo";
+        window.location.href = "https://juegosboti.xyz/petardo";
     }, 4000);
 }
 </script>
