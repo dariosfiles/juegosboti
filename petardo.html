@@ -276,11 +276,22 @@ body{
 
 /* --- RESPONSIVE MÓVIL --- */
 @media (max-width:768px){
-  #coins{ font-size:6vw; }
-  #mechero{ width:12vw; }
-  #backpack{ width:12vw; height:12vw; }
-  #petardo{ width:20vw; }
-  #fire-btn{ display:flex; width:80px; height:80px; font-size:40px; }
+  #coins{ font-size:8vw; } 
+  #mechero{ width:16vw; } 
+  #backpack{ 
+    width:14vw; 
+    height:14vw; 
+    bottom:80px; /* subimos la mochila */
+  }
+  #petardo{ width:25vw; } 
+  #fire-btn{ 
+    display:flex; 
+    width:90px; 
+    height:90px; 
+    font-size:48px; 
+    bottom:20px; 
+    left:20px;
+  }
 }
 </style>
 </head>
@@ -363,7 +374,6 @@ function startGame(){
 
   let dragging=false,holdingE=false,exploded=false;
   let ignition=0,last=null,fuseInterval=null;
-  let offsetX=0, offsetY=0;
 
   let coins=parseInt(localStorage.getItem("coins")||"0");
   document.getElementById("coins").textContent=coins+"€";
@@ -372,39 +382,22 @@ function startGame(){
   const petardos=[{name:"Silba Boom",src:"https://files.catbox.moe/1udjsa.png",size:90,power:3,money:3,needed:0},{name:"Scream 100",src:"https://files.catbox.moe/ni5xz1.png",size:140,power:5,money:5,needed:5}];
   let currentPetardo=null;
 
-  /* Drag mechero PC */
+  /* Drag mechero */
   mechero.onmousedown=()=>dragging=true;
   document.onmouseup=()=>dragging=false;
   document.onmousemove=e=>{if(dragging){const x=Math.min(Math.max(0,e.clientX-32),window.innerWidth-64);const y=Math.min(Math.max(0,e.clientY-32),window.innerHeight-64);mechero.style.left=x+"px";mechero.style.top=y+"px";}};
+  mechero.addEventListener("touchstart", e=>{e.preventDefault(); dragging=true;},{passive:false});
+  mechero.addEventListener("touchend", e=>{e.preventDefault(); dragging=false;},{passive:false});
+  mechero.addEventListener("touchmove", e=>{if(dragging && e.touches.length>0){const touch=e.touches[0];const x=Math.min(Math.max(0,touch.clientX-32),window.innerWidth-64);const y=Math.min(Math.max(0,touch.clientY-32),window.innerHeight-64);mechero.style.left=x+"px";mechero.style.top=y+"px";}}, {passive:false});
 
-  /* Drag móvil corregido */
-  mechero.addEventListener("touchstart", e=>{
-    e.preventDefault();
-    dragging=true;
-    const t=e.touches[0];
-    offsetX = t.clientX - mechero.offsetLeft;
-    offsetY = t.clientY - mechero.offsetTop;
-  }, { passive:false });
-
-  mechero.addEventListener("touchmove", e=>{
-    if(!dragging) return;
-    const t=e.touches[0];
-    let x = t.clientX - offsetX;
-    let y = t.clientY - offsetY;
-    x = Math.min(Math.max(0, x), window.innerWidth - mechero.offsetWidth);
-    y = Math.min(Math.max(0, y), window.innerHeight - mechero.offsetHeight);
-    mechero.style.left = x + "px";
-    mechero.style.top = y + "px";
-  }, { passive:false });
-
-  mechero.addEventListener("touchend", ()=>{ dragging=false; }, { passive:false });
-
-  /* Botón fuego móvil */
+  /* Botón fuego */
   const fireBtn=document.getElementById("fire-btn");
-  fireBtn.addEventListener("touchstart", e=>{ e.preventDefault(); holdingE=true; },{passive:false});
-  fireBtn.addEventListener("touchend", e=>{ e.preventDefault(); holdingE=false; },{passive:false});
+  fireBtn.addEventListener("mousedown",()=>holdingE=true);
+  fireBtn.addEventListener("mouseup",()=>holdingE=false);
+  fireBtn.addEventListener("mouseleave",()=>holdingE=false);
+  fireBtn.addEventListener("touchstart", e=>{e.preventDefault(); holdingE=true;},{passive:false});
+  fireBtn.addEventListener("touchend", e=>{e.preventDefault(); holdingE=false;},{passive:false});
 
-  /* Tecla E PC */
   document.onkeydown=e=>{if(e.key==="e"||e.key==="E")holdingE=true;}
   document.onkeyup=e=>{if(e.key==="e"||e.key==="E")holdingE=false;}
 
@@ -427,7 +420,15 @@ function startGame(){
         div.innerHTML=`<img src="${p.src}"><span style="color:red;font-weight:bold;">TIRA ${faltan} PETARDOS MÁS PARA DESBLOQUEAR</span>`;
       } else {
         div.innerHTML=`<img src="${p.src}"><span>${p.name}</span>`;
-        div.onclick=()=>{currentPetardo=p;petardo.src=p.src;petardo.style.width=(p.size||90)+"px";petardo.style.display="block";exploded=false;ignition=0;backpackPopup.style.display="none";};
+        div.onclick=()=>{
+          currentPetardo=p;
+          petardo.src=p.src;
+          petardo.style.width=(p.size||90)+"px";
+          petardo.style.display="block";
+          exploded=false;
+          ignition=0;
+          backpackPopup.style.display="none";
+        };
       }
       petardoList.appendChild(div);
     });
@@ -441,8 +442,14 @@ function startGame(){
     tutorialPopup.style.display="block";
     let count=10;
     tutorialBtn.textContent=`CERRAR (${count})`;
-    const interval=setInterval(()=>{count--; tutorialBtn.textContent=`CERRAR (${count})`; if(count<=0){tutorialBtn.disabled=false;tutorialBtn.style.cursor="pointer";tutorialBtn.style.opacity=1;clearInterval(interval);}},1000);
-    tutorialBtn.onclick=()=>{tutorialPopup.style.display="none"; localStorage.setItem("tutorialDone","1");};
+    const interval=setInterval(()=>{
+      count--; tutorialBtn.textContent=`CERRAR (${count})`;
+      if(count<=0){tutorialBtn.disabled=false;tutorialBtn.style.cursor="pointer";tutorialBtn.style.opacity=1;clearInterval(interval);}
+    },1000);
+    tutorialBtn.onclick=()=>{
+      tutorialPopup.style.display="none";
+      localStorage.setItem("tutorialDone","1");
+    };
   }
 
   /* Loop principal */
@@ -452,10 +459,25 @@ function startGame(){
   function cameraShake(intensity=12,duration=300){const startTime=performance.now();(function shake(t){const elapsed=t-startTime;const p=1-(elapsed/duration);if(p<=0){game.style.transform="";return;}const x=(Math.random()*2-1)*intensity*p;const y=(Math.random()*2-1)*intensity*p;game.style.transform=`translate(${x}px,${y}px)`;requestAnimationFrame(shake);})(startTime);}
   function addCoins(amount){coins+=amount;localStorage.setItem("coins",coins);document.getElementById("coins").textContent=coins+"€";}
 
-  function loop(t){if(!last) last=t; const dt=t-last; last=t; if(currentPetardo && !exploded && holdingE && near(mechero,petardo)){ignition+=dt; startFuse(); if(ignition>=3000) explode();} else {ignition=0; stopFuse();} requestAnimationFrame(loop);}
+  function loop(t){
+    if(!last) last=t;
+    const dt=t-last; last=t;
+    if(currentPetardo && !exploded && holdingE && near(mechero,petardo)){
+      ignition+=dt; startFuse(); if(ignition>=3000) explode();
+    } else { ignition=0; stopFuse();}
+    requestAnimationFrame(loop);
+  }
   requestAnimationFrame(loop);
 
-  function explode(){if(!currentPetardo)return; exploded=true; stopFuse(); boomSound.currentTime=0; boomSound.play(); cameraShake(14*currentPetardo.power,350); addCoins(currentPetardo.money||3); const r=petardo.getBoundingClientRect();const x=r.left+r.width/2,y=r.top+r.height/2;petardo.style.display="none"; flash.style.opacity=1; setTimeout(()=>flash.style.opacity=0,80); const wave=document.createElement("div");wave.className="shockwave";const waveSize=20+currentPetardo.power*50;wave.style.width=wave.style.height=waveSize+"px";wave.style.left=x+"px";wave.style.top=y+"px";game.appendChild(wave);setTimeout(()=>wave.remove(),500); for(let i=0;i<35;i++){const p=document.createElement("div");p.className="particle";p.style.background=Math.random()>.5?"red":"orange";p.style.left=x+"px";p.style.top=y+"px";game.appendChild(p);const a=Math.random()*Math.PI*2,s=Math.random()*7+3;let life=0;const iv=setInterval(()=>{life++;p.style.left=p.offsetLeft+Math.cos(a)*s+"px";p.style.top=p.offsetTop+Math.sin(a)*s+"px";p.style.opacity-=0.04;if(life>25){clearInterval(iv);p.remove();}},16);} window.explodedCount++; localStorage.setItem("explodedCount",window.explodedCount); renderPetardos();}
+  function explode(){
+    if(!currentPetardo)return;
+    exploded=true; stopFuse(); boomSound.currentTime=0; boomSound.play(); cameraShake(14*currentPetardo.power,350); addCoins(currentPetardo.money||3);
+    const r=petardo.getBoundingClientRect();const x=r.left+r.width/2,y=r.top+r.height/2;petardo.style.display="none";
+    flash.style.opacity=1; setTimeout(()=>flash.style.opacity=0,80);
+    const wave=document.createElement("div");wave.className="shockwave";const waveSize=20+currentPetardo.power*50;wave.style.width=wave.style.height=waveSize+"px";wave.style.left=x+"px";wave.style.top=y+"px";game.appendChild(wave);setTimeout(()=>wave.remove(),500);
+    for(let i=0;i<35;i++){const p=document.createElement("div");p.className="particle";p.style.background=Math.random()>.5?"red":"orange";p.style.left=x+"px";p.style.top=y+"px";game.appendChild(p);const a=Math.random()*Math.PI*2,s=Math.random()*7+3;let life=0;const iv=setInterval(()=>{life++;p.style.left=p.offsetLeft+Math.cos(a)*s+"px";p.style.top=p.offsetTop+Math.sin(a)*s+"px";p.style.opacity-=0.04;if(life>25){clearInterval(iv);p.remove();}},16);}
+    window.explodedCount++; localStorage.setItem("explodedCount",window.explodedCount); renderPetardos();
+  }
 }
 </script>
 
