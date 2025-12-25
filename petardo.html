@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <meta charset="UTF-8">
 <title>Petardo Simulator</title>
 <style>
@@ -330,6 +331,23 @@ body{
 </div>
 
 <script>
+// Detectar si es móvil
+function isMobile() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+if(isMobile()) {
+  // Mostrar alerta y detener ejecución
+  Swal.fire({
+    icon: 'error',
+    title: 'Dispositivo incorrecto',
+    text: 'Solo se puede jugar en PC.',
+    confirmButtonText: 'Cerrar'
+  });
+} else {
+  // Inicia el juego normalmente
+  startGame();
+}
 // --- Intro particles ---
 const canvas = document.getElementById("intro-canvas");
 const ctx = canvas.getContext("2d");
