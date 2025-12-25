@@ -337,12 +337,14 @@ function isMobile() {
 }
 
 if(isMobile()) {
-  // Mostrar alerta y detener ejecución
   Swal.fire({
     icon: 'error',
     title: 'Dispositivo incorrecto',
     text: 'Solo se puede jugar en PC.',
     confirmButtonText: 'Cerrar'
+  }).then(() => {
+    // Redirigir al cerrar la alerta
+    window.location.href = 'https://juegosboti.xyz';
   });
 } else {
   // Inicia el juego normalmente
