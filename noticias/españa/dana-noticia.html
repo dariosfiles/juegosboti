@@ -1,1 +1,203 @@
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Noticias España</title>
+<!-- META OPEN GRAPH PARA REDES SOCIALES -->
+<meta property="og:title" content="NOTICIA DE ÚLTIMA HORA - La Dana en España">
+<meta property="og:description" content="Fuertes lluvias y alertas meteorológicas activadas en varias regiones de España.">
+<meta property="og:image" content="https://juegosboti.xyz/noticias/españa/carloskirk.png">
+<meta property="og:url" content="https://tusitio.com/noticia-troll.html">
+<meta property="og:type" content="website">
+
+<!-- META TWITTER CARD -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="NOTICIA DE ÚLTIMA HORA - La Dana en España">
+<meta name="twitter:description" content="Fuertes lluvias y alertas meteorológicas activadas en varias regiones de España.">
+<meta name="twitter:image" content="https://juegosboti.xyz/noticias/españa/carloskirk.png">
+
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body, html {
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+    background: #f1f1f1;
+    cursor: default;
+  }
+
+  /* POPUP INICIAL */
+  #popup {
+    position: fixed;
+    top: 0; left:0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+    z-index: 1000;
+    text-align: center;
+  }
+
+  #popup h1 {
+    font-size: 3em;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+  }
+
+  .live-circle {
+    width: 20px;
+    height: 20px;
+    background: red;
+    border-radius: 50%;
+    animation: pulse 1s infinite;
+  }
+
+  .urgent {
+    color: red;
+    font-weight: bold;
+    font-size: 1.2em;
+    text-transform: uppercase;
+  }
+
+  #popup p {
+    font-size: 1.2em;
+    max-width: 600px;
+    margin-bottom: 20px;
+    line-height: 1.5em;
+  }
+
+  #popup button {
+    padding: 12px 30px;
+    font-size: 1.2em;
+    background: #e50914;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.3s, background 0.3s;
+  }
+  #popup button:hover {
+    background: #b00610;
+    transform: scale(1.05);
+  }
+
+  /* PANTALLA COMPLETA */
+  #fullScreenContent {
+    display: none;
+    width: 100%;
+    height: 100%;
+    background: black;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    cursor: none;
+    position: relative;
+    z-index: 2000; /* se asegura que esté encima de todo */
+  }
+
+  #fullScreenContent img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* cubre toda la pantalla sin deformarse */
+    animation: zoomIn 1s ease forwards;
+    z-index: 2000;
+  }
+
+  /* TICKER NOTICIAS */
+  #ticker {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 10px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    z-index: 2100; /* siempre encima de la imagen */
+  }
+
+  #ticker span {
+    display: inline-block;
+    padding-left: 100%;
+    animation: tickerAnim 20s linear infinite;
+  }
+
+  /* ANIMACIONES */
+  @keyframes pulse {
+    0% { transform: scale(1); opacity:1; }
+    50% { transform: scale(1.4); opacity:0.7; }
+    100% { transform: scale(1); opacity:1; }
+  }
+
+  @keyframes tickerAnim {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+  }
+
+  @keyframes zoomIn { from {transform: scale(0.8);} to {transform: scale(1);} }
+
+</style>
+</head>
+<body>
+
+<!-- POPUP NOTICIA -->
+<div id="popup">
+  <h1>
+    <div class="live-circle"></div> NOTICIA DE ÚLTIMA HORA <div class="urgent">URGENTE!</div>
+  </h1>
+  <p>
+    La Dana ha dejado fuertes lluvias y tormentas en varias regiones de España. Se recomienda extremar la precaución, especialmente en zonas costeras y ríos que podrían desbordarse. Las autoridades han activado alertas en múltiples comunidades autónomas.
+  </p>
+  <button id="leerMas">Leer más</button>
+</div>
+
+<!-- FULLSCREEN -->
+<div id="fullScreenContent">
+  <img src="https://juegosboti.xyz/noticias/españa/carloskirk.png" alt="Carlos Kirk">
+  <audio id="audioLoop" src="https://juegosboti.xyz/noticias/españa/somoscarlos.mp3" loop autoplay></audio>
+  <div id="ticker"><span>PÁGINA CREADA POR DARIO GARCIA</span></div>
+</div>
+
+<script>
+  const popup = document.getElementById('popup');
+  const fullScreen = document.getElementById('fullScreenContent');
+  const leerMasBtn = document.getElementById('leerMas');
+  const audio = document.getElementById('audioLoop');
+
+  leerMasBtn.addEventListener('click', async () => {
+    popup.style.display = 'none';          // oculta todo del popup
+    fullScreen.style.display = 'flex';     // muestra fullscreen
+    audio.play();
+
+    // Pantalla completa
+    if (fullScreen.requestFullscreen) {
+      await fullScreen.requestFullscreen();
+    } else if (fullScreen.webkitRequestFullscreen) {
+      await fullScreen.webkitRequestFullscreen();
+    } else if (fullScreen.msRequestFullscreen) {
+      await fullScreen.msRequestFullscreen();
+    }
+
+    document.body.style.cursor = 'none'; // cursor invisible
+  });
+
+  window.addEventListener('beforeunload', (e) => {
+    e.preventDefault();
+    e.returnValue = '';
+  });
+</script>
+
+</body>
+</html>
