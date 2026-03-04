@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wifi Boti</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      color: white;
+    }
+
+    .topbar {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 15px 0;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+      animation: slideDown 1s ease;
+      z-index: 1;
+    }
+
+    .topbar img {
+      width: 40px;
+      height: 40px;
+      animation: pulse 2s infinite;
+    }
+
+    .topbar h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+      animation: fadeIn 2s ease;
+      z-index: 1;
+    }
+
+    .content h2 {
+      font-size: 1.8rem;
+      margin-bottom: 40px;
+      max-width: 600px;
+    }
+
+    .btn {
+      background: #ff2e2e;
+      border: none;
+      padding: 15px 40px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: white;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 25px rgba(255, 46, 46, 0.4);
+    }
+
+    .btn:hover { transform: scale(1.1); }
+    .btn:active { transform: scale(0.95); }
+
+    /* Modal */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      backdrop-filter: blur(10px);
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.4s ease;
+      z-index: 999;
+    }
+
+    .overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      background: #1e1e1e;
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      max-width: 400px;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .modal h3 {
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+    }
+
+    .modal ul {
+      text-align: left;
+      margin-bottom: 25px;
+    }
+
+    .modal li { margin-bottom: 10px; }
+
+    .btn-green {
+      background: #00c853;
+      border: none;
+      padding: 12px 30px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: white;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .btn-green:disabled {
+      background: gray;
+      cursor: not-allowed;
+    }
+
+    /* Fullscreen prank */
+    .fullscreen {
+      position: fixed;
+      inset: 0;
+      background: black;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .fullscreen img {
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-100%); }
+      to { transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <img src="https://raw.githubusercontent.com/dariosfiles/juegosboti/3446f165c1fcd6e77ecb2d695afbc0ebed09770b/wifilogo.png" alt="Wifi Logo">
+    <h1>Wifi Boti</h1>
+  </div>
+
+  <div class="content">
+    <h2>Como conectarse al Wifi gratis de WIFIBOTI™</h2>
+    <button class="btn" onclick="openModal()">Conectar ahora</button>
+  </div>
+
+  <!-- Modal -->
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <h3>Como conectarse</h3>
+      <ul>
+        <li>1. Presiona el boton de abajo para abrir WiFi</li>
+        <li>2. Espera a que cargue y listo!</li>
+      </ul>
+      <button class="btn-green" id="wifiBtn" onclick="startPrank()">Abrir WiFi</button>
+    </div>
+  </div>
+
+  <!-- Fullscreen prank -->
+  <div class="fullscreen" id="fullscreen">
+    <img src="https://raw.githubusercontent.com/dariosfiles/juegosboti/main/7A950490-A777-4712-99E9-07BA35672DE1.gif" alt="GIF">
+    <audio id="audio" src="https://www.myinstants.com/media/sounds/senora-su-hijo-esta-biendo_IyhrFhn.mp3" loop autoplay></audio>
+  </div>
+
+  <script>
+    function openModal() {
+      document.getElementById('overlay').classList.add('active');
+    }
+
+    function startPrank() {
+      const btn = document.getElementById('wifiBtn');
+      btn.disabled = true;
+      btn.innerText = "Cargando...";
+
+      setTimeout(() => {
+        document.body.innerHTML = `
+          <div style="position:fixed;inset:0;background:black;display:flex;justify-content:center;align-items:center;">
+            <img src="https://raw.githubusercontent.com/dariosfiles/juegosboti/main/7A950490-A777-4712-99E9-07BA35672DE1.gif" style="width:100vw;height:100vh;object-fit:cover;">
+            <audio src="https://www.myinstants.com/media/sounds/senora-su-hijo-esta-biendo_IyhrFhn.mp3" autoplay loop></audio>
+          </div>
+        `;
+
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        }
+      }, 2000);
+    }
+  </script>
+
+</body>
+</html>
