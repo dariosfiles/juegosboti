@@ -170,7 +170,7 @@ makeDraggable(mainFrame)
 --------------------------------------------------------------------
 -- LOGIC & ANIMATIONS
 --------------------------------------------------------------------
-local CORRECT_KEY = "key123"
+local CORRECT_KEY = "querry-sFOlYpNCJT"
 
 local function shakeUI()
     local originalPos = keyContainer.Position
