@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OREO CASINO</title>
+<style>
+:root{
+--bg-dark:#0f1923;
+--card-bg:#1a242d;
+--accent:#00ff83;
+--danger:#ff4757;
+--text:#ffffff;
+--secondary:#2f3b48;
+--shop-bg:#1a242d;
+--item-bg:#2f3b48;
+}
+
+body{
+margin:0;
+background-color:var(--bg-dark);
+color:var(--text);
+font-family:'Segoe UI',Roboto,sans-serif;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:flex-start;
+min-height:100vh;
+overflow-x:hidden;
+}
+
+#balance-container{
+position:absolute;
+top:20px;
+left:20px;
+background:var(--card-bg);
+padding:10px 20px;
+border-radius:50px;
+display:flex;
+flex-direction:column;
+align-items:center;
+border:2px solid var(--secondary);
+font-weight:bold;
+font-size:1.2rem;
+box-shadow:0 4px 15px rgba(0,0,0,0.3);
+z-index:1000;
+}
+
+#balance-row{
+display:flex;
+align-items:center;
+}
+
+#balance-icon{
+color:var(--accent);
+margin-right:8px;
+}
+
+#shop-btn,#inventory-btn{
+margin-top:10px;
+padding:8px 12px;
+border:none;
+border-radius:8px;
+background:var(--accent);
+color:#000;
+font-weight:bold;
+cursor:pointer;
+}
+
+.game-wrapper{
+background:var(--card-bg);
+padding:2rem;
+border-radius:16px;
+box-shadow:0 10px 30px rgba(0,0,0,0.5);
+text-align:center;
+margin-top:100px;
+width:320px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(4,50px);
+grid-template-rows:repeat(4,50px);
+gap:8px;
+margin:20px 0;
+}
+
+.cell{
+background:var(--secondary);
+border-radius:8px;
+cursor:pointer;
+transition:all 0.2s ease;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:1.2rem;
+border-bottom:3px solid rgba(0,0,0,0.2);
+}
+
+.cell:hover{
+background:#3d4b5a;
+transform:translateY(-2px);
+}
+
+.cell.revealed{
+background:var(--accent);
+border-bottom-color:#00a857;
+pointer-events:none;
+}
+
+.cell.mine{
+background:var(--danger);
+border-bottom-color:#b3323e;
+}
+
+.cell.disabled{
+pointer-events:none;
+opacity:0.6;
+}
+
+.controls{
+display:flex;
+flex-direction:column;
+gap:15px;
+}
+
+input{
+background:var(--bg-dark);
+border:1px solid var(--secondary);
+color:white;
+padding:10px;
+border-radius:4px;
+text-align:center;
+}
+
+.btn{
+padding:12px;
+border:none;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+text-transform:uppercase;
+transition:opacity 0.2s;
+}
+
+#start-btn{background:var(--accent);color:#000;}
+#collect-btn{background:#ffa502;color:#000;}
+
+.btn:disabled{
+opacity:0.3;
+cursor:not-allowed;
+}
+
+.win-display{
+font-size:1.5rem;
+margin-bottom:10px;
+color:var(--accent);
+}
+
+.flying-money{
+position:fixed;
+color:var(--accent);
+font-weight:bold;
+z-index:1000;
+pointer-events:none;
+transition:all 0.8s cubic-bezier(0.175,0.885,0.32,1.275);
+}
+
+#job-box{
+margin-top:20px;
+background:var(--secondary);
+padding:12px;
+border-radius:10px;
+user-select:none;
+position:relative;
+overflow:hidden;
+cursor:pointer;
+}
+
+.ripple{
+position:absolute;
+border-radius:50%;
+background:rgba(255,255,255,0.4);
+transform:scale(0);
+animation:ripple 0.6s linear;
+pointer-events:none;
+}
+
+@keyframes ripple{
+to{transform:scale(4);opacity:0;}
+}
+
+#job-progress-container{
+width:100%;
+background:#2f3b48;
+border-radius:8px;
+overflow:hidden;
+margin-top:10px;
+height:18px;
+}
+
+#job-progress-bar{
+width:0%;
+height:100%;
+background:var(--accent);
+transition:width 0.3s ease;
+}
+
+.popup-overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5);
+backdrop-filter:blur(4px);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:2000;
+opacity:0;
+pointer-events:none;
+transition:opacity 0.3s ease;
+}
+
+.popup-overlay.active{
+opacity:1;
+pointer-events:auto;
+}
+
+.popup{
+background:var(--shop-bg);
+padding:20px;
+border-radius:12px;
+width:300px;
+max-height:80%;
+overflow-y:auto;
+position:relative;
+transform:scale(0.8);
+transition:transform 0.3s ease;
+}
+
+.popup.active{
+transform:scale(1);
+}
+
+.popup .close-x{
+position:absolute;
+top:10px;
+right:10px;
+cursor:pointer;
+font-weight:bold;
+font-size:16px;
+}
+
+.shop-item{
+background:var(--item-bg);
+padding:10px;
+border-radius:8px;
+margin-bottom:10px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+}
+
+.shop-item img{
+width:50px;
+height:50px;
+border-radius:6px;
+}
+
+.shop-item button{
+padding:5px 8px;
+border:none;
+border-radius:6px;
+background:#28a745;
+color:#000;
+cursor:pointer;
+font-weight:bold;
+}
+
+.inventory-container{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+max-height:300px;
+overflow-y:auto;
+margin-top:10px;
+}
+
+.inventory-item{
+background:var(--item-bg);
+padding:10px;
+border-radius:8px;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+width:80px;
+}
+
+.inventory-item img{
+width:50px;
+height:50px;
+border-radius:6px;
+}
+
+.inventory-item button{
+padding:3px 5px;
+margin-top:5px;
+border:none;
+border-radius:6px;
+background:#28a745;
+color:#000;
+cursor:pointer;
+font-weight:bold;
+font-size:12px;
+}
+
+.notification-container{
+position:fixed;
+top:20px;
+right:20px;
+display:flex;
+flex-direction:column;
+gap:10px;
+z-index:3000;
+}
+
+.notification{
+background:var(--accent);
+padding:10px 15px;
+border-radius:8px;
+font-weight:bold;
+color:#000;
+opacity:0;
+transform:translateX(100%);
+animation:slideIn 0.5s forwards;
+}
+
+@keyframes slideIn{
+to{opacity:1;transform:translateX(0);}
+}
+</style>
+</head>
+<body>
+
+<div id="balance-container">
+<div id="balance-row">
+<span id="balance-icon">$</span>
+<span id="total-balance">10</span>
+</div>
+<button id="shop-btn">Shop</button>
+<button id="inventory-btn">Inventory</button>
+</div>
+
+<div class="game-wrapper" id="wrapper">
+<div class="win-display">Win: $<span id="current-win">0.00</span></div>
+<div id="grid" class="grid"></div>
+
+<div class="controls">
+<div style="display:flex;justify-content:space-between;align-items:center;">
+<label>Bet:</label>
+<input type="number" id="bet-input" value="1" min="1" max="100" step="1" style="width:80px;">
+</div>
+<button id="start-btn" class="btn">Start Game</button>
+<button id="collect-btn" class="btn" disabled>Cash Out</button>
+</div>
+
+<div id="job-box">
+Click here to earn $1
+<div id="job-progress-container">
+<div id="job-progress-bar"></div>
+</div>
+</div>
+</div>
+
+<div class="popup-overlay" id="shop-popup">
+<div class="popup" id="shop-content">
+<div class="close-x" id="shop-close">X</div>
+<h3>Shop</h3>
+<div id="shop-items"></div>
+</div>
+</div>
+
+<div class="popup-overlay" id="inventory-popup">
+<div class="popup" id="inventory-content">
+<div class="close-x" id="inventory-close">X</div>
+<h3>Inventory</h3>
+<div class="inventory-container" id="inventory-items"></div>
+</div>
+</div>
+
+<div class="notification-container" id="notifications"></div>
+
+<script>
+let balance=10, currentWin=0, betAmount=1;
+const GRID_SIZE=16, MINE_COUNT=3;
+let mines=[], gameActive=false, revealedCount=0, jobClicks=0, JOB_MAX=25;
+let oreos=0, oreoPrice=3200, oreoStock=0, oreoCost=5400;
+
+const balanceEl=document.getElementById('total-balance');
+const winEl=document.getElementById('current-win');
+const startBtn=document.getElementById('start-btn');
+const collectBtn=document.getElementById('collect-btn');
+const betInput=document.getElementById('bet-input');
+const jobBox=document.getElementById("job-box");
+const jobProgressBar=document.getElementById("job-progress-bar");
+const wrapper=document.getElementById("wrapper");
+
+const shopBtn=document.getElementById("shop-btn");
+const shopPopup=document.getElementById("shop-popup");
+const shopClose=document.getElementById("shop-close");
+const shopItemsEl=document.getElementById("shop-items");
+
+const inventoryBtn=document.getElementById("inventory-btn");
+const inventoryPopup=document.getElementById("inventory-popup");
+const inventoryClose=document.getElementById("inventory-close");
+const inventoryItemsEl=document.getElementById("inventory-items");
+
+const notificationsEl=document.getElementById("notifications");
+
+function vibrate(pattern){if(navigator.vibrate){navigator.vibrate(pattern);}}
+function createNotification(text){const notif=document.createElement('div');notif.className='notification';notif.innerText=text;notificationsEl.appendChild(notif);setTimeout(()=>notif.remove(),5000);}
+
+/* Load saved data */
+const savedData = JSON.parse(localStorage.getItem('modernMines')) || {};
+balance = savedData.balance || 10;
+oreos = savedData.oreos || 0;
+oreoPrice = savedData.oreoPrice || 3200;
+jobClicks = savedData.jobClicks || 0;
+jobProgressBar.style.width = (jobClicks/25*100)+'%';
+
+/* Save data function */
+function saveGame(){
+  const data={balance,oreos,oreoPrice,jobClicks};
+  localStorage.setItem('modernMines',JSON.stringify(data));
+}
+
+/* Grid/Game */
+function createGrid(){gridEl=document.getElementById('grid');gridEl.innerHTML='';for(let i=0;i<GRID_SIZE;i++){const c=document.createElement('div');c.className='cell disabled';c.dataset.index=i;c.onclick=()=>handleCellClick(i,c);gridEl.appendChild(c);}}
+function startGame(){betAmount=parseFloat(betInput.value);if(balance<betAmount){alert("Insufficient balance!");return;}balance-=betAmount;updateUI();gameActive=true;revealedCount=0;currentWin=0;winEl.innerText="0.00";mines=new Array(GRID_SIZE).fill(false);let placed=0;while(placed<MINE_COUNT){let r=Math.floor(Math.random()*GRID_SIZE);if(!mines[r]){mines[r]=true;placed++;}}document.querySelectorAll('.cell').forEach(c=>{c.className='cell';c.innerHTML='';});startBtn.disabled=true;collectBtn.disabled=true;}
+function handleCellClick(idx,el){if(!gameActive||el.classList.contains('revealed')) return;if(mines[idx]){vibrate([120,50,120]);wrapper.classList.add("shake");setTimeout(()=>wrapper.classList.remove("shake"),400);gameOver();el.classList.add('mine');el.innerHTML='💣';}else{vibrate(30);el.classList.add('revealed');el.innerHTML='💎';revealedCount++;calculateWin();collectBtn.disabled=false;}}
+function calculateWin(){let multiplier=1+(revealedCount*0.15);currentWin=betAmount*multiplier;winEl.innerText=currentWin.toFixed(2);}
+function gameOver(){gameActive=false;startBtn.disabled=false;collectBtn.disabled=true;mines.forEach((isMine,i)=>{if(isMine){const c=document.getElementById('grid').children[i];c.classList.add('mine');c.innerHTML='💣';}document.getElementById('grid').children[i].classList.add('disabled');});}
+function collect(){if(!gameActive) return;const rect=collectBtn.getBoundingClientRect();animateMoney(rect.left,rect.top,`$${currentWin.toFixed(2)}`);balance+=currentWin;gameOver();updateUI();}
+function updateUI(){balanceEl.innerText=balance.toFixed(0);updateInventory();updateShopStock();saveGame();}
+function animateMoney(x,y,text){const el=document.createElement('div');el.className='flying-money';el.innerText=text;el.style.left=x+'px';el.style.top=y+'px';document.body.appendChild(el);const target=document.getElementById('balance-container').getBoundingClientRect();setTimeout(()=>{el.style.left=target.left+'px';el.style.top=target.top+'px';el.style.opacity='0';el.style.transform='scale(0.5)';},50);setTimeout(()=>el.remove(),800);}
+
+/* Job */
+jobBox.addEventListener("click",(e)=>{vibrate(20);const ripple=document.createElement("span");ripple.classList.add("ripple");const rect=jobBox.getBoundingClientRect();const size=Math.max(rect.width,rect.height);ripple.style.width=size+"px";ripple.style.height=size+"px";ripple.style.left=(e.clientX-rect.left-size/2)+"px";ripple.style.top=(e.clientY-rect.top-size/2)+"px";jobBox.appendChild(ripple);setTimeout(()=>ripple.remove(),600);jobClicks++;if(jobClicks>JOB_MAX) jobClicks=JOB_MAX;jobProgressBar.style.width=(jobClicks/JOB_MAX*100)+"%";if(jobClicks>=JOB_MAX){vibrate([60,40,60]);jobClicks=0;jobProgressBar.style.width="0%";animateMoney(rect.left,rect.top,"$1");balance+=1;updateUI();}});
+
+/* Shop & Inventory */
+function updateShopStock(){oreoStock=Math.floor(Math.random()*6);shopItemsEl.innerHTML='';const item=document.createElement('div');item.className='shop-item';item.innerHTML=`<img src="https://juegosboti.xyz/miperro.png"><div>Oreo $${oreoCost}<br>Stock: ${oreoStock}</div>`;const btn=document.createElement('button');btn.innerText='Buy';btn.disabled = oreoStock===0;btn.onclick=()=>{if(balance>=oreoCost && oreoStock>0){balance-=oreoCost; oreos++; oreoStock--; createNotification('You bought an Oreo!'); updateUI(); updateShopStock();}};item.appendChild(btn);shopItemsEl.appendChild(item);}
+function updateInventory(){inventoryItemsEl.innerHTML='';for(let i=0;i<oreos;i++){const inv=document.createElement('div');inv.className='inventory-item';inv.innerHTML=`<img src="https://juegosboti.xyz/miperro.png"><div>$${oreoPrice}</div>`;const btn=document.createElement('button');btn.innerText='Sell';btn.onclick=()=>{balance+=oreoPrice; oreos--; updateInventory(); updateUI();};inv.appendChild(btn);inventoryItemsEl.appendChild(inv);}}
+setInterval(()=>{oreoPrice+=1000;updateInventory();},60000);
+setInterval(()=>{updateShopStock();createNotification('Shop has restocked!');},60000);
+
+/* Popups */
+shopBtn.onclick=()=>{shopPopup.classList.add('active');document.getElementById('shop-content').classList.add('active');}
+shopClose.onclick=()=>{shopPopup.classList.remove('active');document.getElementById('shop-content').classList.remove('active');}
+shopPopup.onclick=(e)=>{if(e.target===shopPopup){shopClose.click();}}
+
+inventoryBtn.onclick=()=>{inventoryPopup.classList.add('active');document.getElementById('inventory-content').classList.add('active');updateInventory();}
+inventoryClose.onclick=()=>{inventoryPopup.classList.remove('active');document.getElementById('inventory-content').classList.remove('active');}
+inventoryPopup.onclick=(e)=>{if(e.target===inventoryPopup){inventoryClose.click();}}
+
+createGrid();
+updateUI();
+
+startBtn.onclick=startGame;
+collectBtn.onclick=collect;
+</script>
+</body>
+</html>
