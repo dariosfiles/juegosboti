@@ -396,7 +396,7 @@ Click here to earn $1
 <script>
 let balance=10, currentWin=0, betAmount=1;
 const GRID_SIZE=16, MINE_COUNT=3;
-let mines=[], gameActive=false, revealedCount=0, jobClicks=0, JOB_MAX=25;
+let mines=[], gameActive=false, revealedCount=0, jobClicks=0, JOB_MAX=35;
 let oreos=0, oreoPrice=3200, oreoStock=0, oreoCost=5400;
 
 const balanceEl=document.getElementById('total-balance');
@@ -448,7 +448,7 @@ function updateUI(){balanceEl.innerText=balance.toFixed(0);updateInventory();upd
 function animateMoney(x,y,text){const el=document.createElement('div');el.className='flying-money';el.innerText=text;el.style.left=x+'px';el.style.top=y+'px';document.body.appendChild(el);const target=document.getElementById('balance-container').getBoundingClientRect();setTimeout(()=>{el.style.left=target.left+'px';el.style.top=target.top+'px';el.style.opacity='0';el.style.transform='scale(0.5)';},50);setTimeout(()=>el.remove(),800);}
 
 /* Job */
-jobBox.addEventListener("click",(e)=>{vibrate(20);const ripple=document.createElement("span");ripple.classList.add("ripple");const rect=jobBox.getBoundingClientRect();const size=Math.max(rect.width,rect.height);ripple.style.width=size+"px";ripple.style.height=size+"px";ripple.style.left=(e.clientX-rect.left-size/2)+"px";ripple.style.top=(e.clientY-rect.top-size/2)+"px";jobBox.appendChild(ripple);setTimeout(()=>ripple.remove(),600);jobClicks++;if(jobClicks>JOB_MAX) jobClicks=JOB_MAX;jobProgressBar.style.width=(jobClicks/JOB_MAX*100)+"%";if(jobClicks>=JOB_MAX){vibrate([60,40,60]);jobClicks=0;jobProgressBar.style.width="0%";animateMoney(rect.left,rect.top,"$1");balance+=1;updateUI();}});
+jobBox.addEventListener("click",(e)=>{vibrate(20);const ripple=document.createElement("span");ripple.classList.add("ripple");const rect=jobBox.getBoundingClientRect();const size=Math.max(rect.width,rect.height);ripple.style.width=size+"px";ripple.style.height=size+"px";ripple.style.left=(e.clientX-rect.left-size/2)+"px";ripple.style.top=(e.clientY-rect.top-size/2)+"px";jobBox.appendChild(ripple);setTimeout(()=>ripple.remove(),600);jobClicks++;if(jobClicks>JOB_MAX) jobClicks=JOB_MAX;jobProgressBar.style.width=(jobClicks/JOB_MAX*100)+"%";if(jobClicks>=JOB_MAX){vibrate([60,40,60]);jobClicks=0;jobProgressBar.style.width="0%";animateMoney(rect.left,rect.top,"$10");balance+=10;updateUI();}});
 
 /* Shop & Inventory */
 function updateShopStock(){oreoStock=Math.floor(Math.random()*6);shopItemsEl.innerHTML='';const item=document.createElement('div');item.className='shop-item';item.innerHTML=`<img src="https://juegosboti.xyz/miperro.png"><div>Oreo $${oreoCost}<br>Stock: ${oreoStock}</div>`;const btn=document.createElement('button');btn.innerText='Buy';btn.disabled = oreoStock===0;btn.onclick=()=>{if(balance>=oreoCost && oreoStock>0){balance-=oreoCost; oreos++; oreoStock--; createNotification('You bought an Oreo!'); updateUI(); updateShopStock();}};item.appendChild(btn);shopItemsEl.appendChild(item);}
