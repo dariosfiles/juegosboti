@@ -2,6 +2,36 @@
 # FORTNITE PERFORMANCE & LATENCY OPTIMIZATION SCRIPT
 # Target: Windows 10 | Focus: FPS, Input Lag, Responsiveness
 # ==========================================================
+# --- COOL TITLE GLITCH EFFECT START ---
+$TitleText = "juegosboti.xyz"
+
+$GlitchJob = Start-Job -ScriptBlock {
+    param($text)
+    while ($true) {
+        $glitched = ""
+        foreach ($char in $text.ToCharArray()) {
+            # 50/50 chance to uppercase or lowercase
+            if ((Get-Random -Minimum 0 -Maximum 2) -eq 1) {
+                $glitched += $char.ToString().ToUpper()
+            } else {
+                $glitched += $char.ToString().ToLower()
+            }
+        }
+        $host.UI.RawUI.WindowTitle = $glitched
+        Start-Sleep -Milliseconds 150 # Speed of the glitch
+    }
+} -ArgumentList $TitleText
+
+Clear-Host
+Write-Host "Initializing Optimization..." -ForegroundColor Cyan
+# --- COOL TITLE GLITCH EFFECT END ---
+
+# [Your existing optimization code goes here]
+
+# IMPORTANT: Kill the glitch job at the very end of your script 
+# so the CPU doesn't keep cycling after you're done:
+# Stop-Job $GlitchJob | Remove-Job
+Clear-Host
 
 Write-Host "This is free if you paid you got scammed - made & hosted in juegosboti.xyz" -ForegroundColor Cyan
 
@@ -57,3 +87,4 @@ if (!(Test-Path $FortniteReg)) { New-Item -Path $FortniteReg -Force }
 Set-ItemProperty -Path $FortniteReg -Name "CpuPriorityClass" -Value 3
 
 Write-Host "Optimization Complete! Please restart your PC for all changes to apply." -ForegroundColor Green
+Stop-Job $GlitchJob | Remove-Job
