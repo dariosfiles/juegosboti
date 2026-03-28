@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔔 IMPORTANTE!</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Arial Black', sans-serif;
+            overflow: hidden; /* Evita barras de desplazamiento durante la animación */
+        }
+
+        /* Estilos para el texto de Pancho */
+        #pancho-text {
+            color: #ffcc00;
+            font-size: 5rem;
+            text-transform: uppercase;
+            text-shadow: 4px 4px 0px #ff4500;
+            text-align: center;
+            border: 5px solid #ffcc00;
+            padding: 20px 40px;
+            opacity: 1;
+            transition: opacity 1s ease-out; /* Transición suave al desaparecer */
+        }
+
+        /* Estilos para el botón de Jairines */
+        #jairines-button {
+            display: none; /* Oculto por defecto */
+            background-color: #ff4500; /* Fondo naranja/rojo vibrante */
+            color: white;
+            font-size: 3rem;
+            text-transform: uppercase;
+            border: none;
+            padding: 20px 60px;
+            cursor: pointer;
+            border-radius: 50px; /* Bordes redondeados */
+            box-shadow: 0px 10px 20px rgba(255, 69, 0, 0.5); /* Sombra intensa */
+            opacity: 0;
+            transform: scale(0.5); /* Empieza pequeño */
+            transition: all 0.5s ease-out; /* Animación de entrada suave */
+        }
+
+        /* Clase para activar la animación de entrada del botón */
+        #jairines-button.show {
+            display: block;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Efecto hover (al pasar el ratón) para que parezca que respira */
+        #jairines-button:hover {
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0px 10px 20px rgba(255, 69, 0, 0.5);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0px 15px 30px rgba(255, 69, 0, 0.8);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0px 10px 20px rgba(255, 69, 0, 0.5);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1 id="pancho-text">PANCHO OCUPA</h1>
+
+    <button id="jairines-button" onclick="handleButtonClick()">JAIRINES</button>
+
+    <script>
+        // Espera 5 segundos (5000 milisegundos) antes de ejecutar el cambio
+        setTimeout(function() {
+            var panchoText = document.getElementById('pancho-text');
+            var jairinesButton = document.getElementById('jairines-button');
+
+            // 1. Oculta el texto de Pancho con una transición
+            panchoText.style.opacity = '0';
+
+            // 2. Después de que el texto desaparezca (1 segundo), muestra el botón
+            setTimeout(function() {
+                panchoText.style.display = 'none'; // Elimina el espacio del texto
+                jairinesButton.classList.add('show'); // Activa la animación del botón
+            }, 1000); // Coincide con el tiempo de transición de CSS
+
+        }, 5000); // Los 5 segundos iniciales
+
+        // Función que se ejecuta al hacer clic en el botón "Jairines"
+        function handleButtonClick() {
+            // Muestra el popup
+            alert("adios!!!!!");
+            // Redirecciona a example.com
+            window.location.href = "https://pornhub.com";
+        }
+    </script>
+
+</body>
+</html>
