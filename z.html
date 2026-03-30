@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🔔 RULETA LIVE</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── CSS Variables ─────────────────────────────────────────── */
+    :root {
+      --bg:        #0d0d14;
+      --panel:     #16161f;
+      --gold:      #f5c842;
+      --gold-dim:  #c8a025;
+      --red:       #e03050;
+      --red-dim:   #a01c36;
+      --teal:      #1ecfb0;
+      --white:     #f0ede8;
+      --muted:     #6b6880;
+      --radius:    18px;
+      --spin-dur:  4s; /* overridden by JS */
+    }
+
+    /* ─── Reset & Base ──────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      font-family: 'Nunito', sans-serif;
+      color: var(--white);
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* Starfield bg */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, #1a1230 0%, transparent 70%),
+        radial-gradient(ellipse 60% 50% at 80% 110%, #0b1a2a 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* ─── Title ─────────────────────────────────────────────────── */
+    .title {
+      font-family: 'Bebas Neue', cursive;
+      font-size: clamp(2.2rem, 6vw, 4rem);
+      letter-spacing: 0.12em;
+      color: var(--gold);
+      text-shadow: 0 0 30px #f5c84255, 0 2px 0 #a07010;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+
+    /* ─── Wheel Wrapper ─────────────────────────────────────────── */
+    .wheel-wrapper {
+      position: relative;
+      width: min(360px, 84vw);
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Glow ring behind wheel */
+    .wheel-glow {
+      position: absolute;
+      inset: -16px;
+      border-radius: 50%;
+      background: conic-gradient(
+        from 0deg,
+        var(--red-dim), var(--gold-dim), var(--red-dim), var(--gold-dim), var(--red-dim)
+      );
+      opacity: 0.25;
+      filter: blur(18px);
+      transition: opacity 0.4s;
+    }
+    .wheel-wrapper:hover .wheel-glow,
+    .spinning .wheel-glow {
+      opacity: 0.55;
+    }
+
+    /* Outer decorative ring */
+    .wheel-ring {
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      background: conic-gradient(
+        var(--gold) 0deg 2deg, transparent 2deg 180deg,
+        var(--gold) 180deg 182deg, transparent 182deg 360deg
+      );
+      box-shadow: 0 0 0 3px #1a1a28, inset 0 0 0 3px #1a1a28;
+    }
+
+    /* Canvas */
+    #wheelCanvas {
+      position: relative;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow:
+        0 0 0 6px #1a1a28,
+        0 8px 40px #00000088,
+        0 0 60px #f5c84222;
+      transition: box-shadow 0.3s;
+    }
+    #wheelCanvas:hover {
+      box-shadow:
+        0 0 0 6px #1a1a28,
+        0 12px 50px #000000aa,
+        0 0 80px #f5c84244;
+    }
+
+    /* ─── Pointer ───────────────────────────────────────────────── */
+    .pointer {
+      position: absolute;
+      top: -28px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 14px solid transparent;
+      border-right: 14px solid transparent;
+      border-top: 32px solid var(--gold);
+      filter: drop-shadow(0 4px 8px #f5c84288);
+      z-index: 10;
+    }
+    .pointer::after {
+      content: '';
+      position: absolute;
+      top: -36px;
+      left: -10px;
+      width: 20px;
+      height: 20px;
+      background: var(--gold);
+      border-radius: 50%;
+      box-shadow: 0 0 12px var(--gold);
+    }
+
+    /* ─── Center Hub ────────────────────────────────────────────── */
+    .hub {
+      position: absolute;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%, #fce97a, #c8860a);
+      box-shadow: 0 0 0 5px #1a1a28, 0 4px 16px #000000aa;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    /* ─── Spin Button ───────────────────────────────────────────── */
+    .btn-spin {
+      margin-top: 36px;
+      padding: 14px 52px;
+      font-family: 'Bebas Neue', cursive;
+      font-size: 1.5rem;
+      letter-spacing: 0.15em;
+      color: var(--bg);
+      background: linear-gradient(135deg, var(--gold) 0%, #e8a800 100%);
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 4px 24px #f5c84244, 0 2px 0 #9a6800;
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-spin::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -60%;
+      width: 40%; height: 100%;
+      background: rgba(255,255,255,0.25);
+      transform: skewX(-20deg);
+      transition: left 0.4s;
+    }
+    .btn-spin:hover:not(:disabled)::before { left: 130%; }
+    .btn-spin:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px #f5c84266, 0 2px 0 #9a6800;
+    }
+    .btn-spin:active:not(:disabled) { transform: translateY(1px); }
+    .btn-spin:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    /* ─── Result Banner ─────────────────────────────────────────── */
+    .result-area {
+      margin-top: 28px;
+      min-height: 64px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .result-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.4s, transform 0.4s;
+    }
+
+    .result-text {
+      font-family: 'Bebas Neue', cursive;
+      font-size: clamp(2rem, 6vw, 3rem);
+      letter-spacing: 0.1em;
+      opacity: 0;
+      transform: scale(0.8) translateY(10px);
+      transition: opacity 0.4s 0.1s, transform 0.4s 0.1s;
+    }
+
+    .result-area.visible .result-label,
+    .result-area.visible .result-text {
+      opacity: 1;
+      transform: none;
+    }
+
+    .result-text.lose  { color: var(--red);  text-shadow: 0 0 20px #e0305088; }
+    .result-text.win   { color: var(--teal); text-shadow: 0 0 20px #1ecfb088; }
+
+    /* ─── Confetti Particles ─────────────────────────────────────── */
+    .confetti-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      opacity: 0;
+      animation: confettiFall linear forwards;
+    }
+
+    @keyframes confettiFall {
+      0%   { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
+      80%  { opacity: 1; }
+      100% { opacity: 0; transform: translateY(120vh) rotate(720deg) scale(0.4); }
+    }
+
+    /* ─── Tick shake (pointer bounce) ──────────────────────────── */
+    @keyframes pointerBounce {
+      0%, 100% { transform: translateX(-50%) rotate(0deg); }
+      25%       { transform: translateX(-50%) rotate(-12deg); }
+      75%       { transform: translateX(-50%) rotate(12deg); }
+    }
+    .pointer.ticking { animation: pointerBounce 0.07s linear; }
+
+    /* ─── Hint ──────────────────────────────────────────────────── */
+    .hint {
+      position: fixed;
+      bottom: 20px;
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.15em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Title -->
+
+  <!-- Wheel -->
+  <div class="wheel-wrapper" id="wheelWrapper">
+    <div class="wheel-glow"></div>
+    <div class="wheel-ring"></div>
+    <div class="pointer" id="pointer"></div>
+    <canvas id="wheelCanvas" width="340" height="340" tabindex="0" aria-label="Ruleta, haz clic para girar"></canvas>
+    <div class="hub"></div>
+  </div>
+
+  <!-- Spin Button -->
+  <button class="btn-spin" id="btnSpin" aria-label="Girar la ruleta">GIRAR</button>
+
+  <!-- Result -->
+  <div class="result-area" id="resultArea" aria-live="polite">
+    <span class="result-label">Resultado</span>
+    <span class="result-text" id="resultText"></span>
+  </div>
+
+  <!-- Confetti container -->
+  <div class="confetti-container" id="confettiContainer"></div>
+
+  <p class="hint">↩ Enter · click para girar</p>
+
+  <script>
+    /* ═══════════════════════════════════════════════════════════════
+       CONFIGURATION
+    ═══════════════════════════════════════════════════════════════ */
+    const SEGMENTS = [
+      { label: 'PIERDES',            color: '#c0192e', textColor: '#fff8f0' },
+      { label: 'GANAS TODA\nMI BASE', color: '#d4a012', textColor: '#1a1008' },
+    ];
+
+    /* The wheel has 2 equal segments (180° each).
+       Segment 0 = PIERDES occupies 0°–180°.
+       The pointer is at the TOP (270° in canvas coords).
+       We want the wheel to always stop so PIERDES is under the pointer.
+       
+       Canvas angles: 0 = right, 90 = down, 180 = left, 270 = top.
+       Each segment i starts at:  i * (360/n)  degrees from 0.
+       Segment 0 centre: 90° (pointing DOWN in canvas terms).
+       To bring its centre to the TOP (270°): rotate by 270° - 90° = 180°.
+       We build the draw logic to always start drawing from -90° (top),
+       so segment 0 already straddles the top — see drawWheel().
+    */
+    const SEGMENT_COUNT  = SEGMENTS.length;
+    const SEGMENT_ANGLE  = 360 / SEGMENT_COUNT;          // 180°
+    // Winning (losing for the user) segment index — always 0 = PIERDES
+    const TARGET_SEGMENT = 0;
+
+    /* ═══════════════════════════════════════════════════════════════
+       STATE
+    ═══════════════════════════════════════════════════════════════ */
+    let currentAngle = 0;   // degrees, total cumulative rotation
+    let isSpinning   = false;
+
+    /* ═══════════════════════════════════════════════════════════════
+       DOM REFS
+    ═══════════════════════════════════════════════════════════════ */
+    const canvas     = document.getElementById('wheelCanvas');
+    const ctx        = canvas.getContext('2d');
+    const btnSpin    = document.getElementById('btnSpin');
+    const resultArea = document.getElementById('resultArea');
+    const resultText = document.getElementById('resultText');
+    const pointer    = document.getElementById('pointer');
+    const confettiEl = document.getElementById('confettiContainer');
+
+    /* ═══════════════════════════════════════════════════════════════
+       AUDIO — tiny Web Audio API tick & whoosh
+    ═══════════════════════════════════════════════════════════════ */
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx   = null;
+
+    function getAudioCtx() {
+      if (!audioCtx) audioCtx = new AudioCtx();
+      return audioCtx;
+    }
+
+    /** Play a short click/tick sound */
+    function playTick() {
+      try {
+        const ac  = getAudioCtx();
+        const osc = ac.createOscillator();
+        const env = ac.createGain();
+        osc.connect(env);
+        env.connect(ac.destination);
+        osc.frequency.value = 480 + Math.random() * 200;
+        env.gain.setValueAtTime(0.18, ac.currentTime);
+        env.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.06);
+        osc.start(ac.currentTime);
+        osc.stop(ac.currentTime + 0.06);
+      } catch (_) {}
+    }
+
+    /** Play a rising whoosh at spin start */
+    function playWhoosh() {
+      try {
+        const ac   = getAudioCtx();
+        const noise = ac.createOscillator();
+        const env   = ac.createGain();
+        noise.type  = 'sawtooth';
+        noise.connect(env);
+        env.connect(ac.destination);
+        noise.frequency.setValueAtTime(80, ac.currentTime);
+        noise.frequency.exponentialRampToValueAtTime(600, ac.currentTime + 0.35);
+        env.gain.setValueAtTime(0.0, ac.currentTime);
+        env.gain.linearRampToValueAtTime(0.22, ac.currentTime + 0.05);
+        env.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.5);
+        noise.start(ac.currentTime);
+        noise.stop(ac.currentTime + 0.55);
+      } catch (_) {}
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       DRAW WHEEL
+    ═══════════════════════════════════════════════════════════════ */
+    function drawWheel(rotateDeg) {
+      const W = canvas.width;
+      const H = canvas.height;
+      const cx = W / 2;
+      const cy = H / 2;
+      const R  = W / 2 - 4;
+
+      ctx.clearRect(0, 0, W, H);
+
+      const startOffset = (-90 + rotateDeg) * (Math.PI / 180); // start from top
+
+      SEGMENTS.forEach((seg, i) => {
+        const startAngle = startOffset + i * (2 * Math.PI / SEGMENT_COUNT);
+        const endAngle   = startAngle  + (2 * Math.PI / SEGMENT_COUNT);
+        const midAngle   = (startAngle + endAngle) / 2;
+
+        /* --- Segment fill --- */
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, R, startAngle, endAngle);
+        ctx.closePath();
+
+        // Radial gradient per segment for depth
+        const grd = ctx.createRadialGradient(cx, cy, R * 0.1, cx, cy, R);
+        grd.addColorStop(0, lighten(seg.color, 30));
+        grd.addColorStop(1, seg.color);
+        ctx.fillStyle = grd;
+        ctx.fill();
+
+        /* --- Divider lines --- */
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + R * Math.cos(startAngle), cy + R * Math.sin(startAngle));
+        ctx.strokeStyle = 'rgba(0,0,0,0.35)';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        /* --- Text --- */
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(midAngle);
+        ctx.textAlign    = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle    = seg.textColor;
+
+        const lines = seg.label.split('\n');
+        const lineH  = 22;
+        const offset = -(lines.length - 1) * lineH / 2;
+
+        lines.forEach((line, li) => {
+          const fontSize = line.length > 8 ? 18 : 22;
+          ctx.font = `900 ${fontSize}px 'Bebas Neue', cursive`;
+          // Shadow
+          ctx.shadowColor   = 'rgba(0,0,0,0.6)';
+          ctx.shadowBlur    = 6;
+          ctx.shadowOffsetX = 1;
+          ctx.shadowOffsetY = 2;
+          ctx.fillText(line, R * 0.52, offset + li * lineH);
+        });
+        ctx.restore();
+      });
+
+      /* --- Outer rim --- */
+      ctx.beginPath();
+      ctx.arc(cx, cy, R, 0, Math.PI * 2);
+      ctx.strokeStyle = '#1a1a28';
+      ctx.lineWidth   = 7;
+      ctx.stroke();
+
+      /* Shiny inner rim */
+      ctx.beginPath();
+      ctx.arc(cx, cy, R - 3, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+      ctx.lineWidth   = 2;
+      ctx.stroke();
+    }
+
+    /** Lighten a hex color by `amount` */
+    function lighten(hex, amount) {
+      const n = parseInt(hex.replace('#',''), 16);
+      const r = Math.min(255, (n >> 16) + amount);
+      const g = Math.min(255, ((n >> 8) & 0xff) + amount);
+      const b = Math.min(255, (n & 0xff) + amount);
+      return `rgb(${r},${g},${b})`;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       SPIN LOGIC
+    ═══════════════════════════════════════════════════════════════ */
+
+    /**
+     * Compute the exact final angle so that TARGET_SEGMENT is under the pointer.
+     * The pointer sits at the "top" of the wheel, which corresponds to
+     * the start of drawing (−90° offset = angle 0 of our segment array).
+     *
+     * Segment `i` occupies [ i*SEGMENT_ANGLE, (i+1)*SEGMENT_ANGLE ).
+     * Its visual centre is at (i + 0.5) * SEGMENT_ANGLE.
+     * We want that centre to align with 0 (top) after rotation:
+     *   (currentAngle + delta + centre) mod 360 = 0
+     *   delta = -(currentAngle + centre) mod 360
+     */
+    function computeTargetAngle(extraFullRotations) {
+      const centre = TARGET_SEGMENT * SEGMENT_ANGLE + SEGMENT_ANGLE / 2; // 90°
+      // raw delta to align perfectly
+      let rawDelta = (-(currentAngle + centre) % 360 + 360) % 360;
+      // Add a small random jitter within the segment (±35% of half-segment) so
+      // the pointer doesn't always land dead-centre — feels more natural.
+      const jitter = (Math.random() - 0.5) * 0.7 * SEGMENT_ANGLE;
+      rawDelta += jitter;
+      // Keep rawDelta between 20° and 340° so we always spin at least a bit
+      if (rawDelta < 20)  rawDelta += 360;
+      if (rawDelta > 340) rawDelta -= 360;
+      // Add full rotations (3–6 extra rounds)
+      return rawDelta + extraFullRotations * 360;
+    }
+
+    /** Cubic ease-out easing function */
+    function easeOut(t) {
+      return 1 - Math.pow(1 - t, 4);
+    }
+
+    let lastTickAngle = 0;  // for pointer tick detection
+
+    function spin() {
+      if (isSpinning) return;
+      isSpinning = true;
+
+      // Reset result
+      resultArea.classList.remove('visible');
+      resultText.className = 'result-text';
+      resultText.textContent = '';
+
+      // Disable controls
+      btnSpin.disabled = true;
+      canvas.style.cursor = 'default';
+
+      playWhoosh();
+
+      // Randomise duration and extra rotations to feel natural
+      const extraRots  = 4 + Math.floor(Math.random() * 4);   // 4–7 full spins
+      const duration   = 3800 + Math.random() * 1800;          // 3.8–5.6 s
+      const totalDelta = computeTargetAngle(extraRots);
+
+      const startAngle = currentAngle;
+      const startTime  = performance.now();
+      lastTickAngle    = startAngle;
+
+      /* --- Animation loop --- */
+      function frame(now) {
+        const elapsed  = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const easedP   = easeOut(progress);
+
+        currentAngle = startAngle + totalDelta * easedP;
+        drawWheel(currentAngle % 360);
+
+        // Pointer tick — fires each time we cross a segment boundary
+        const tickInterval = SEGMENT_ANGLE; // every 180°
+        const ticksPast    = Math.floor((currentAngle - startAngle) / tickInterval);
+        const ticksLastF   = Math.floor((lastTickAngle  - startAngle) / tickInterval);
+        if (ticksPast > ticksLastF) {
+          playTick();
+          // Visual pointer bounce
+          pointer.classList.remove('ticking');
+          void pointer.offsetWidth; // reflow to restart animation
+          pointer.classList.add('ticking');
+          setTimeout(() => pointer.classList.remove('ticking'), 100);
+        }
+        lastTickAngle = currentAngle;
+
+        if (progress < 1) {
+          requestAnimationFrame(frame);
+        } else {
+          // Spin complete
+          currentAngle = startAngle + totalDelta; // exact final value
+          drawWheel(currentAngle % 360);
+          onSpinComplete();
+        }
+      }
+
+      requestAnimationFrame(frame);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       RESULT
+    ═══════════════════════════════════════════════════════════════ */
+    function onSpinComplete() {
+      isSpinning = false;
+      btnSpin.disabled = false;
+      canvas.style.cursor = 'pointer';
+
+      const seg = SEGMENTS[TARGET_SEGMENT];
+
+      setTimeout(() => {
+        resultText.textContent = seg.label.replace('\n', ' ');
+        resultText.classList.add('lose');
+        resultArea.classList.add('visible');
+
+        // Confetti — playfully celebratory even though they lost 🎉
+        spawnConfetti(40);
+      }, 200);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       CONFETTI
+    ═══════════════════════════════════════════════════════════════ */
+    const CONFETTI_COLORS = ['#f5c842','#e03050','#1ecfb0','#a855f7','#fb923c','#38bdf8'];
+
+    function spawnConfetti(count) {
+      confettiEl.innerHTML = '';
+      for (let i = 0; i < count; i++) {
+        const el = document.createElement('div');
+        el.className = 'confetti-piece';
+        const isCircle = Math.random() > 0.5;
+        el.style.cssText = `
+          left: ${Math.random() * 100}%;
+          top: ${-10 - Math.random() * 10}%;
+          background: ${CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)]};
+          border-radius: ${isCircle ? '50%' : '2px'};
+          width: ${6 + Math.random() * 10}px;
+          height: ${6 + Math.random() * 10}px;
+          animation-duration: ${1.6 + Math.random() * 2}s;
+          animation-delay: ${Math.random() * 0.6}s;
+        `;
+        confettiEl.appendChild(el);
+      }
+      // Clean up after animations
+      setTimeout(() => { confettiEl.innerHTML = ''; }, 4000);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       EVENT LISTENERS
+    ═══════════════════════════════════════════════════════════════ */
+    canvas.addEventListener('click',  spin);
+    btnSpin.addEventListener('click', spin);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') spin();
+    });
+
+    /* ═══════════════════════════════════════════════════════════════
+       INIT
+    ═══════════════════════════════════════════════════════════════ */
+    drawWheel(0);
+  </script>
+</body>
+</html>
