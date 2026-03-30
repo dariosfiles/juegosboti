@@ -1,256 +1,585 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Links</title>
-    <style>
-        :root {
-            --bg: #0b0e14;
-            --card: #161b22;
-            --accent: #79c0ff; 
-            --border: rgba(255, 255, 255, 0.1);
-            --text: #c9d1d9;
-            --text-bright: #ffffff;
-            --danger: #ff7b72;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JuegosBoti.Xyz</title>
 
-        * { 
-            box-sizing: border-box; 
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s, border 0.3s, box-shadow 0.3s; 
-            /* Cursor reset to default */
-            cursor: default;
-        }
+<link rel="icon" type="image/x-icon" href="https://juegosboti.xyz/siteicon.ico">
 
-        /* Buttons and links should still show the hand pointer */
-        button, .nav-item, .dl-btn, .menu-item, a {
-            cursor: pointer !important;
-        }
+<meta property="og:title" content="Juegosboti.xyz" />
+<meta property="og:description" content="The best gaming products." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://juegosboti.xyz" />
+<meta property="og:image" content="https://juegosboti.xyz/siteicon.ico" />
+<meta name="theme-color" content="#00f0ff">
 
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            padding-top: 5vh;
-            overflow-x: hidden;
-            min-height: 100vh;
-        }
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Juegosboti.xyz">
+<meta name="twitter:description" content="The best gaming products.">
 
-        /* Custom Context Menu */
-        #contextMenu {
-            position: fixed;
-            display: none;
-            background: #1c2128;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            z-index: 1000;
-            width: 160px;
-            padding: 5px;
-            transform: scale(0.9);
-            opacity: 0;
-            transition: transform 0.15s ease, opacity 0.15s ease;
-            pointer-events: none;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<script src="https://sellauth.com/assets/js/sellauth-embed-2.js"></script>
+<style>
+  :root {
+    --bg: #050810;
+    --surface: #0b1120;
+    --surface2: #0f1830;
+    --accent: #00f0ff;
+    --accent2: #7b2fff;
+    --accent3: #ff2f7b;
+    --text: #e8f4ff;
+    --muted: #5a7a99;
+    --border: rgba(0, 240, 255, 0.15);
+    --glow: 0 0 20px rgba(0, 240, 255, 0.3);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,240,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,240,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none; z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed; top: -20%; left: 50%;
+    transform: translateX(-50%);
+    width: 80vw; height: 80vw;
+    background: radial-gradient(ellipse, rgba(123,47,255,0.08) 0%, transparent 65%);
+    pointer-events: none; z-index: 0;
+  }
 
-        #contextMenu.visible {
-            display: block;
-            transform: scale(1);
-            opacity: 1;
-            pointer-events: auto;
-        }
+  /* HEADER */
+  header {
+    position: relative; z-index: 10;
+    padding: 0 3rem; height: 80px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    background: rgba(5,8,16,0.85);
+    backdrop-filter: blur(12px);
+  }
+  .logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.4rem; font-weight: 900; letter-spacing: 0.05em;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .logo-dot { -webkit-text-fill-color: var(--accent3); color: var(--accent3); }
+  .logo-badge {
+    font-family: 'Share Tech Mono', monospace; font-size: 0.6rem;
+    color: var(--accent); border: 1px solid var(--accent);
+    padding: 2px 6px; border-radius: 2px; margin-left: 10px;
+    letter-spacing: 0.15em; vertical-align: middle; position: relative; top: -2px;
+    opacity: 0.7; -webkit-text-fill-color: var(--accent);
+  }
+  nav { display: flex; gap: 2.5rem; align-items: center; }
+  nav a {
+    font-family: 'Rajdhani', sans-serif; font-size: 0.85rem; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+    text-decoration: none; transition: color 0.2s;
+    cursor: pointer;
+  }
+  nav a:hover { color: var(--accent); }
+  .nav-cta {
+    font-size: 0.8rem !important; font-weight: 700 !important;
+    color: var(--bg) !important; background: var(--accent);
+    padding: 8px 20px; border-radius: 3px;
+    transition: box-shadow 0.2s, opacity 0.2s;
+  }
+  .nav-cta:hover { box-shadow: var(--glow); opacity: 0.9; }
 
-        .menu-item {
-            padding: 10px 15px;
-            font-size: 0.85rem;
-            color: var(--text);
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            user-select: none;
-        }
+  /* HERO */
+  .hero {
+    position: relative; z-index: 5;
+    text-align: center; padding: 6rem 2rem 4rem;
+  }
+  .hero-eyebrow {
+    font-family: 'Share Tech Mono', monospace; font-size: 0.72rem;
+    letter-spacing: 0.35em; color: var(--accent); text-transform: uppercase;
+    margin-bottom: 1.5rem; opacity: 0.8;
+    animation: fadeInDown 0.6s ease both;
+  }
+  .hero h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(2.5rem, 6vw, 5.5rem); font-weight: 900;
+    line-height: 1.05; margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, #fff 30%, var(--accent) 65%, var(--accent2) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    animation: fadeInDown 0.7s 0.1s ease both;
+  }
+  .hero p {
+    font-size: 1.1rem; color: var(--muted);
+    max-width: 520px; margin: 0 auto; line-height: 1.6;
+    animation: fadeInDown 0.7s 0.2s ease both;
+  }
 
-        .menu-item:hover {
-            background: var(--accent);
-            color: var(--bg);
-            font-weight: 600;
-        }
+  /* DIVIDER */
+  .divider {
+    display: flex; align-items: center; gap: 1.5rem;
+    max-width: 900px; margin: 3rem auto; padding: 0 2rem;
+    position: relative; z-index: 5;
+  }
+  .divider-line { flex: 1; height: 1px; background: var(--border); }
+  .divider-icon {
+    font-family: 'Share Tech Mono', monospace; font-size: 0.65rem;
+    color: var(--accent); letter-spacing: 0.2em; opacity: 0.5; white-space: nowrap;
+  }
 
-        /* Standard Shell Styling */
-        .shell {
-            width: 90%;
-            max-width: 700px;
-            animation: slideUp 0.8s ease;
-        }
+  /* SCROLLABLE PRODUCTS SECTION */
+  .products-section {
+    position: relative; z-index: 5;
+    max-width: 1200px; margin: 0 auto 5rem; padding: 0 2rem;
+  }
+  .section-label {
+    font-family: 'Share Tech Mono', monospace; font-size: 0.7rem;
+    letter-spacing: 0.35em; color: var(--accent2); text-transform: uppercase;
+    margin-bottom: 0.5rem; opacity: 0.8;
+  }
+  .section-heading {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1.2rem, 3vw, 1.8rem); font-weight: 700;
+    margin-bottom: 2.5rem; color: var(--text);
+  }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+  .products-scroll-container {
+    max-height: 650px;
+    overflow-y: auto;
+    padding-right: 15px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent2) var(--surface);
+  }
+  .products-scroll-container::-webkit-scrollbar { width: 6px; }
+  .products-scroll-container::-webkit-scrollbar-track { background: var(--surface); }
+  .products-scroll-container::-webkit-scrollbar-thumb { background: var(--accent2); border-radius: 10px; }
 
-        .nav {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 25px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 10px;
-        }
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+    padding-bottom: 20px;
+  }
 
-        .nav-item {
-            font-weight: 500;
-            padding: 5px 10px;
-            position: relative;
-            color: var(--text);
-            text-decoration: none;
-        }
+  .product-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; overflow: hidden;
+    transition: border-color 0.25s, transform 0.2s, box-shadow 0.25s;
+    display: flex; flex-direction: column; position: relative;
+  }
+  .product-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .product-card:hover { border-color: rgba(0,240,255,0.4); transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,240,255,0.1); }
+  .product-card:hover::before { opacity: 1; }
+  
+  .product-img-wrap {
+    width: 100%; aspect-ratio: 1 / 1;
+    background: var(--surface2); overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .product-img-wrap img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.4s;
+  }
+  
+  .product-price-tag {
+    position: absolute; bottom: 10px; right: 10px;
+    background: rgba(11, 17, 32, 0.9);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.9rem; font-weight: 700;
+    padding: 4px 10px; border-radius: 4px;
+    backdrop-filter: blur(4px);
+    z-index: 2;
+  }
 
-        .nav-item.active { color: var(--accent); }
-        .nav-item.active::after {
-            content: '';
-            position: absolute;
-            bottom: -11px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: var(--accent);
-            box-shadow: 0 0 10px var(--accent);
-        }
+  .product-info { padding: 1.2rem 1.4rem 1.4rem; display: flex; flex-direction: column; flex: 1; }
+  .product-title {
+    font-family: 'Orbitron', monospace; font-size: 0.82rem; font-weight: 700;
+    color: var(--text); margin-bottom: 0.6rem; letter-spacing: 0.03em; line-height: 1.4;
+  }
+  .product-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.55; flex: 1; margin-bottom: 1.2rem; }
 
-        .search-container { margin-bottom: 20px; }
-        #globalSearch {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 12px 15px;
-            color: white;
-            outline: none;
-        }
+  .sellauth-button {
+    font-family: 'Rajdhani', sans-serif !important;
+    font-size: 0.8rem !important; font-weight: 700 !important;
+    letter-spacing: 0.18em !important; text-transform: uppercase !important;
+    color: var(--bg) !important;
+    background: linear-gradient(135deg, var(--accent), var(--accent2)) !important;
+    border: none !important; padding: 11px 20px !important;
+    border-radius: 4px !important; cursor: pointer !important;
+    width: 100% !important; display: flex !important;
+    align-items: center !important; justify-content: center !important;
+    gap: 8px !important; transition: box-shadow 0.2s, opacity 0.2s !important;
+  }
+  .sellauth-button:hover { box-shadow: var(--glow) !important; opacity: 0.9 !important; }
 
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .delivery-banner { position: relative; z-index: 5; max-width: 900px; margin: 0 auto 5rem; padding: 0 2rem; }
+  .delivery-box {
+    background: linear-gradient(135deg, rgba(0,240,255,0.05), rgba(123,47,255,0.05));
+    border: 1px solid var(--accent); border-radius: 8px;
+    padding: 2.5rem 3rem; display: flex; align-items: center; gap: 2.5rem;
+    box-shadow: 0 0 40px rgba(0,240,255,0.07);
+  }
+  .delivery-icon-wrap { font-size: 3rem; flex-shrink: 0; filter: drop-shadow(0 0 12px rgba(0,240,255,0.5)); }
+  .delivery-box h3 { font-family: 'Orbitron', monospace; font-size: 1rem; font-weight: 700; color: var(--accent); margin-bottom: 0.6rem; }
+  .delivery-box p { font-size: 0.95rem; color: var(--muted); line-height: 1.65; }
 
-        .item-box {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
-        }
+  footer {
+    position: relative; z-index: 5; margin-top: auto;
+    border-top: 1px solid var(--border); padding: 2rem 3rem;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem; background: rgba(5,8,16,0.9);
+  }
+  .footer-left { font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em; }
+  .tos-link {
+    font-family: 'Rajdhani', sans-serif; font-size: 0.82rem; font-weight: 600;
+    letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted);
+    cursor: pointer; border: none; background: none; transition: color 0.2s;
+  }
 
-        .item-box:hover {
-            border-color: var(--accent);
-            transform: translateY(-3px);
-            background: #1c2128;
-            box-shadow: 0 12px 24px rgba(0,0,0,0.4);
-        }
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(5,8,16,0.88); backdrop-filter: blur(8px);
+    z-index: 1000; align-items: center; justify-content: center; padding: 2rem;
+  }
+  .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--accent);
+    border-radius: 8px; max-width: 680px; width: 100%; max-height: 80vh;
+    display: flex; flex-direction: column;
+    box-shadow: 0 0 60px rgba(0, 240, 255, 0.15);
+    position: relative; overflow: hidden;
+    animation: modalIn 0.25s ease;
+  }
 
-        .item-meta { font-size: 0.7rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1.5px; display: block; margin-bottom: 8px; }
-        .item-title { font-size: 1.25rem; color: var(--text-bright); margin: 0 0 10px 0; }
-        .item-body { line-height: 1.6; font-size: 0.95rem; margin-bottom: 15px; }
+  #warningModal .modal, #supportModal .modal, #couponModal .modal {
+    max-width: 450px;
+    border-color: var(--accent3);
+    box-shadow: 0 0 60px rgba(255, 47, 123, 0.2);
+  }
+  #warningModal .modal::before, #supportModal .modal::before, #couponModal .modal::before {
+    background: linear-gradient(90deg, var(--accent3), var(--accent2));
+  }
+  #warningModal h2, #supportModal h2, #couponModal h2 {
+    color: var(--accent3);
+  }
 
-        .dl-btn {
-            display: inline-flex;
-            background: rgba(121, 192, 255, 0.1);
-            color: var(--accent);
-            border: 1px solid var(--accent);
-            padding: 8px 20px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 600;
-        }
+  .modal::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent), var(--accent3));
+  }
+  .modal-header {
+    padding: 1.8rem 2rem 1.2rem; border-bottom: 1px solid var(--border);
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-shrink: 0;
+  }
+  .modal-header h2 { font-family: 'Orbitron', monospace; font-size: 1rem; font-weight: 700; color: var(--accent); letter-spacing: 0.08em; }
+  .modal-header p { font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; color: var(--muted); margin-top: 4px; letter-spacing: 0.12em; }
+  .modal-close {
+    background: none; border: 1px solid var(--border); color: var(--muted);
+    cursor: pointer; width: 34px; height: 34px; border-radius: 4px; font-size: 1.1rem;
+    display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+  }
+  .modal-close:hover { color: var(--accent); border-color: var(--accent); background: rgba(0,240,255,0.05); }
+  .modal-body {
+    padding: 2rem; overflow-y: auto; flex: 1;
+    scrollbar-width: thin; scrollbar-color: var(--accent2) var(--surface2);
+  }
+  .modal-body::-webkit-scrollbar { width: 5px; }
+  .modal-body::-webkit-scrollbar-track { background: var(--surface2); }
+  .modal-body::-webkit-scrollbar-thumb { background: var(--accent2); border-radius: 3px; }
+  .tos-section { margin-bottom: 2rem; }
+  .tos-section h3 {
+    font-family: 'Orbitron', monospace; font-size: 0.78rem; font-weight: 700;
+    color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase;
+    margin-bottom: 0.8rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
+  }
+  .tos-section p { font-family: 'Rajdhani', sans-serif; font-size: 0.95rem; color: #8aafcc; line-height: 1.75; }
+  .modal-footer { padding: 1.2rem 2rem; border-top: 1px solid var(--border); text-align: right; flex-shrink: 0; }
 
-        .dl-btn:hover { background: var(--accent); color: var(--bg); box-shadow: 0 0 15px rgba(121, 192, 255, 0.4); }
-    </style>
+  .btn-primary {
+    font-family: 'Rajdhani', sans-serif; font-size: 0.85rem; font-weight: 700;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--bg); background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; padding: 14px 36px; border-radius: 3px; cursor: pointer;
+    transition: all 0.25s; display: inline-block;
+  }
+  .btn-primary:hover { box-shadow: 0 0 30px rgba(0,240,255,0.5); transform: translateY(-2px); }
+
+  .coupon-item {
+    background: var(--surface2);
+    border: 1px dashed var(--accent);
+    padding: 1rem;
+    margin-top: 1rem;
+    text-align: center;
+    border-radius: 4px;
+  }
+  .coupon-code {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.2rem;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+
+  .scanline {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+    pointer-events: none; z-index: 1;
+  }
+
+  @keyframes fadeInDown { from { opacity:0; transform:translateY(-18px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+  @keyframes modalIn { from { opacity:0; transform:scale(0.96) translateY(10px); } to { opacity:1; transform:scale(1) translateY(0); } }
+
+  @media (max-width: 600px) {
+    header { padding: 0 1.2rem; }
+    nav { display: none; }
+    .delivery-box { flex-direction: column; text-align: center; }
+    footer { flex-direction: column; align-items: center; text-align: center; }
+  }
+</style>
 </head>
-<body oncontextmenu="return false;">
+<body>
+<div class="scanline"></div>
 
-<div id="contextMenu">
-    <div class="menu-item" onclick="location.reload()">Refresh Page</div>
-    <div class="menu-item" onclick="forceSwitchTab('tab-downloads')">Downloads</div>
+<header>
+  <div class="logo">
+    JuegosBoti<span class="logo-dot">.</span>Xyz
+    <span class="logo-badge">STORE</span>
+  </div>
+  <nav>
+    <a onclick="openSupport()">Support</a>
+    <a onclick="openCoupons()" class="nav-cta">COUPONS</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <p class="hero-eyebrow">// Digital & Physical Products //</p>
+  <h1>Welcome to<br>JuegosBoti.Xyz</h1>
+  <p>Your destination for premium gaming products. Browse our curated selection below.</p>
+</section>
+
+<div class="divider">
+  <div class="divider-line"></div>
+  <div class="divider-icon">◆ Trusted Platform ◆</div>
+  <div class="divider-line"></div>
 </div>
 
-<div class="shell">
-    <nav class="nav">
-        <div id="nav-ann" class="nav-item active" onclick="switchTab(this, 'tab-announcements')">Announcements</div>
-        <div id="nav-dl" class="nav-item" onclick="switchTab(this, 'tab-downloads')">Downloads</div>
-    </nav>
-
-    <div class="search-container">
-        <input type="text" id="globalSearch" placeholder="Search content..." onkeyup="filterItems()">
-    </div>
-
-    <div id="tab-announcements" class="tab-content active">
-        <div class="item-box">
-            <span class="item-meta">📣 Update Announcement</span>
-            <h3 class="item-title">Adding more useful things</h3>
-            <p class="item-body">You will be able to download them in the download section!</p>
+<section class="products-section">
+  <p class="section-label">// Available Now //</p>
+  <h2 class="section-heading">Product Catalog</h2>
+  
+  <div class="products-scroll-container">
+    <div class="products-grid">
+      <div class="product-card" data-product-id="667825" data-variant-id="1055741" data-price="9.99">
+        <div class="product-img-wrap">
+          <img src="https://static.wikia.nocookie.net/stealabr/images/3/34/Skibidi_toilet.png/revision/latest?cb=20251227221221" alt="Skibidi Toilet">
+          <div class="product-price-tag">75€</div>
         </div>
-    </div>
-
-    <div id="tab-downloads" class="tab-content">
-        <div class="item-box">
-            <span class="item-meta">VERIFIED SAFE</span>
-            <h3 class="item-title">Xeno executor roblox</h3>
-            <p class="item-body">DOWNLOAD AND TRY IF THIS VERSION DOESNT WORK, JUST GET NEW ONE FROM SITE, I WILL UPDATE SOMETIMES</p>
-            <a href="https://juegosboti.xyz/xeno-idk-if-updated.zip" class="dl-btn">Download</a>
+        <div class="product-info">
+          <div class="product-title">[STEAL A BRAINROT] Skibidi Toilet</div>
+          <div class="product-desc">Own the iconic Skibidi Toilet from the Steal a Brainrot collection. A must-have for any true brainrot connoisseur.</div>
+          <button type="button" class="sellauth-button" onclick="buyProduct(this)">Buy Now</button>
         </div>
+      </div>
     </div>
+  </div>
+</section>
+
+<div class="delivery-banner">
+  <div class="delivery-box">
+    <div class="delivery-icon-wrap">💎</div>
+    <div>
+      <h3>Looking for workers</h3>
+      <p>Recommend the site to your friends or connections and if they <strong style="color:var(--accent)">buy</strong> a product, you will get <strong style="color:var(--accent2)">worker</strong> role, you will get 10% of every purchase a user makes.</p>
+    </div>
+  </div>
 </div>
 
-<div id="tab-downloads" class="tab-content">
-        <div class="item-box">
-            <span class="item-meta">CREATED  BY WEBSITE OWNER</span>
-            <h3 class="item-title">Casino simulator</h3>
-            <p class="item-body">Play it online now, no download needed :)</p>
-            <a href="https://juegosboti.xyz/casinos/mines" class="dl-btn">PLAY</a>
-        </div>
+<footer>
+  <div class="footer-left"><span>JuegosBoti.Xyz</span> &nbsp;·&nbsp; © 2025 All rights reserved</div>
+  <button class="tos-link" onclick="openModal()">Terms of Service</button>
+</footer>
+
+<div class="modal-overlay" id="couponModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h2>COUPONS</h2>
+        <p>DISCOUNT PROTOCOL // ACTIVE</p>
+      </div>
+      <button class="modal-close" onclick="closeCoupons()">✕</button>
     </div>
+    <div class="modal-body">
+      <div class="tos-section">
+        <p style="text-align: center; color: var(--text);">Find here your best deals:</p>
+        <div class="coupon-item">
+            <span class="coupon-code">RELEASE</span>
+            <p style="font-size: 0.9rem; color: var(--muted);">2$ off any product.</p>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" style="text-align: center;">
+      <button class="btn-primary" onclick="closeCoupons()" style="width: 100%;">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="supportModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h2>Support Not Available</h2>
+        <p>NETWORK STATUS // OFFLINE</p>
+      </div>
+      <button class="modal-close" onclick="closeSupport()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="tos-section">
+        <p style="text-align: center; line-height: 1.8;">Our support team cannot reach you at the moment, please try again in another moment.</p>
+      </div>
+    </div>
+    <div class="modal-footer" style="text-align: center;">
+      <button class="btn-primary" onclick="closeSupport()" style="width: 100%;">OK</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="warningModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h2>WARNING</h2>
+        <p>TRANSACTION PROTOCOL // ACTION REQUIRED</p>
+      </div>
+      <button class="modal-close" onclick="closeWarning()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="tos-section">
+        <p style="color: var(--text); font-weight: 600; text-align: center; margin-bottom: 1.5rem;">PLEASE READ CAREFULLY</p>
+        <p style="text-align: center; line-height: 1.8;">
+          By proceeding with this purchase, you formally acknowledge and agree to be bound by the <strong>JuegosBoti.Xyz Terms of Service</strong> in their entirety. 
+          <br><br>
+          This transaction includes your irrevocable acceptance of our <strong>No-Refund Policy</strong> as defined in § 4 of our terms.
+        </p>
+      </div>
+    </div>
+    <div class="modal-footer" style="text-align: center;">
+      <button class="btn-primary" id="confirmPurchaseBtn" style="width: 100%;">I agree that i have read them.</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="tosModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h2>Terms of Service</h2>
+        <p>JUEGOSBOTI.XYZ — LAST UPDATED: 2025</p>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="tos-section">
+        <h3>§ 1 — Introduction and Acceptance</h3>
+        <p>These Terms of Service ("Terms") constitute a legally binding agreement between you ("Customer," "Buyer," or "User") and JuegosBoti.Xyz ("the Store," "we," "us," or "our") governing your access to and use of our platform and the purchase of any products offered therein. By accessing this website, creating an account, or completing any transaction, you expressly acknowledge that you have read, understood, and agree to be bound by these Terms in their entirety. If you do not agree with any provision herein, you are not authorized to use this platform or engage in any commercial activity through it.</p>
+      </div>
+      <div class="tos-section">
+        <h3>§ 2 — Nature of Products and Delivery Methods</h3>
+        <p>JuegosBoti.Xyz offers products that may be delivered in one of two distinct modalities, as determined exclusively by the nature of each individual product listed on our platform:</p>
+        <p style="margin-top:1rem"><strong style="color:var(--accent)">2.1 — Digital Image Delivery:</strong> Certain products available through JuegosBoti.Xyz are classified as digital in nature. These products shall be delivered to the Customer in the form of a digital image or digital file, transmitted electronically through the means specified at the time of purchase. The digital image constitutes the complete and final form of the purchased product. Upon successful electronic transmission, the delivery obligation of JuegosBoti.Xyz shall be considered fulfilled in its entirety.</p>
+        <p style="margin-top:1rem"><strong style="color:var(--accent2)">2.2 — Physical Image Delivery:</strong> Certain products available through JuegosBoti.Xyz are classified as physical in nature. These products shall be delivered to the Customer in the form of a tangible, physical image or printed material, dispatched via a shipping or postal carrier to the physical address provided by the Customer at the time of purchase. Delivery timelines are subject to the policies and operational capacity of the selected carrier.</p>
+        <p style="margin-top:1rem"><strong>2.3 — Determination of Delivery Method:</strong> The applicable delivery method is determined solely by the nature and classification of each specific product as indicated on its respective product listing page. The Customer acknowledges that the delivery method is disclosed prior to the completion of any purchase.</p>
+      </div>
+      <div class="tos-section">
+        <h3>§ 3 — Scope of Delivery Obligation</h3>
+        <p>The sole and complete obligation of JuegosBoti.Xyz with respect to any product sold through this platform is the delivery of said product — whether in digital or physical image form — as described in Section 2 above. No warranties, guarantees, or representations are made beyond those expressly stated in the relevant product listing. The Customer expressly acknowledges that the product delivered constitutes the entirety of what was purchased and that no additional goods, services, licenses, or entitlements are implied or included unless explicitly stated in writing at the time of sale.</p>
+      </div>
+      <div class="tos-section">
+        <h3>§ 4 — No Refund Policy</h3>
+        <p>ALL SALES ARE FINAL. JuegosBoti.Xyz operates a strict and unconditional no-refund policy with respect to all products sold through this platform, without exception. By completing a purchase, the Customer expressly acknowledges and irrevocably agrees that no refund, reversal, exchange, credit, or compensation of any kind shall be issued under any circumstance whatsoever, including but not limited to: dissatisfaction with the product, accidental or mistaken purchase, change of mind, failure to read the product description prior to purchase, technical difficulties on the Customer's end, or any other reason of any nature. The Customer accepts full and sole responsibility for reviewing all product information — including the delivery method, product description, and applicable variant — prior to finalizing any transaction. JuegosBoti.Xyz shall bear absolutely no obligation to process, consider, or respond to any refund request submitted after a purchase has been completed. By proceeding with any purchase on this platform, the Customer unequivocally and permanently waives any and all claims to a refund, chargeback, or reversal of payment. Attempts to initiate unauthorized chargebacks or payment disputes in contradiction of this policy may result in permanent restriction of access to this platform.</p>
+      </div>
+      <div class="tos-section">
+        <h3>§ 5 — Customer Responsibilities</h3>
+        <p>The Customer bears full responsibility for providing accurate and complete delivery information prior to finalizing any purchase. In the case of digital delivery, this includes ensuring the accuracy of the designated electronic address. In the case of physical delivery, this includes providing a complete, valid, and accessible postal address. JuegosBoti.Xyz shall not be held liable for failed, delayed, or misdirected deliveries resulting from inaccurate or incomplete information provided by the Customer.</p>
+      </div>
+      <div class="tos-section">
+        <h3>§ 6 — Modifications to Terms</h3>
+        <p>JuegosBoti.Xyz reserves the right to amend, update, or otherwise modify these Terms of Service at any time and at its sole discretion. Any such modifications shall become effective upon their publication on this platform. Continued use of the platform following any such modification shall constitute the Customer's acceptance of the revised Terms.</p>
+      </div>
+      <div class="tos-section">
+        <h3>§ 7 — Contact and Disputes</h3>
+        <p>Should any question or concern arise in connection with the delivery of a product purchased through JuegosBoti.Xyz, the Customer is encouraged to contact our support team through the official channels provided on this platform. JuegosBoti.Xyz is committed to resolving all legitimate concerns in a timely and professional manner, in accordance with these Terms and applicable regulations. For the avoidance of doubt, delivery-related inquiries shall not constitute grounds for a refund request, as all sales remain final pursuant to Section 4 of these Terms.</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-primary" onclick="closeModal()" style="font-size:0.75rem;padding:10px 28px;">I Understand</button>
+    </div>
+  </div>
 </div>
 
 <script>
-    const menu = document.getElementById('contextMenu');
+  const SHOP_ID = 227377;
+  let pendingPurchase = null;
 
-    // Right Click Logic
-    window.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-        const { clientX: x, clientY: y } = e;
-        
-        menu.style.left = `${x}px`;
-        menu.style.top = `${y}px`;
-        menu.classList.add('visible');
-    });
+  function buyProduct(btn) {
+    const card = btn.closest('[data-product-id]');
+    const productId = parseInt(card.dataset.productId);
+    const variantId = parseInt(card.dataset.variantId);
+    pendingPurchase = { productId, variantId, btn };
+    openWarning();
+  }
 
-    window.addEventListener('click', () => {
-        menu.classList.remove('visible');
-    });
-
-    function switchTab(element, tabId) {
-        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-        element.classList.add('active');
-        document.getElementById(tabId).classList.add('active');
+  document.getElementById('confirmPurchaseBtn').onclick = function() {
+    if (pendingPurchase) {
+      window.sellAuthEmbed.checkout(pendingPurchase.btn, {
+        cart: [{ 
+            productId: pendingPurchase.productId, 
+            variantId: pendingPurchase.variantId, 
+            quantity: 1 
+        }],
+        shopId: SHOP_ID,
+        modal: true
+      });
+      closeWarning();
     }
+  };
 
-    function forceSwitchTab(tabId) {
-        const targetNav = tabId === 'tab-downloads' ? document.getElementById('nav-dl') : document.getElementById('nav-ann');
-        switchTab(targetNav, tabId);
-    }
+  function openWarning() { document.getElementById('warningModal').classList.add('open'); document.body.style.overflow = 'hidden'; }
+  function closeWarning() { document.getElementById('warningModal').classList.remove('open'); document.body.style.overflow = ''; pendingPurchase = null; }
+  function openSupport() { document.getElementById('supportModal').classList.add('open'); document.body.style.overflow = 'hidden'; }
+  function closeSupport() { document.getElementById('supportModal').classList.remove('open'); document.body.style.overflow = ''; }
+  function openModal() { document.getElementById('tosModal').classList.add('open'); document.body.style.overflow = 'hidden'; }
+  function closeModal() { document.getElementById('tosModal').classList.remove('open'); document.body.style.overflow = ''; }
+  function openCoupons() { document.getElementById('couponModal').classList.add('open'); document.body.style.overflow = 'hidden'; }
+  function closeCoupons() { document.getElementById('couponModal').classList.remove('open'); document.body.style.overflow = ''; }
 
-    function filterItems() {
-        const input = document.getElementById('globalSearch').value.toLowerCase();
-        const activeTab = document.querySelector('.tab-content.active');
-        const items = activeTab.querySelectorAll('.item-box');
-        items.forEach(item => {
-            const text = item.innerText.toLowerCase();
-            item.style.display = text.includes(input) ? "block" : "none";
-        });
+  window.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal-overlay')) {
+      closeModal(); closeWarning(); closeSupport(); closeCoupons();
     }
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeModal(); closeWarning(); closeSupport(); closeCoupons();
+    }
+  });
 </script>
-
 </body>
 </html>
