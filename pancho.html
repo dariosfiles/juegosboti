@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JuegosBoti - Pancho History</title>
+    <style>
+        * {
+            cursor: var(--custom-cursor, auto) !important;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --pixel-cursor-url: url('https://github.com/dariosfiles/juegesillo/raw/refs/heads/main/pixel.cur');
+            --pixel-link-cursor: url('https://github.com/dariosfiles/juegesillo/raw/refs/heads/main/pixellink.cur');
+            --bg-casa-basura: url('https://github.com/dariosfiles/juegesillo/blob/main/casabasura.jpg?raw=true');
+            --bg-casa-pancho: url('https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/casaconpanchito.png');
+            --bg-pancho-ojos: url('https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/panchoojosrojos.png');
+            --bg-pancho-corre: url('https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/corriendopancho.png');
+            --bg-desokupas: url('https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/desokupasfinal.png');
+            --bg-okupahub: url('https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/okupahub.png');
+            --bg-femboy: url('https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/femboypancho.png');
+            --bg-zaguilla: url('https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/zaguillini.png');
+            --bg-pelea: url('https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/peleasergio.png');
+            --bg-sergio-vueltas: url('https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/dadovueltasergio.png');
+            --bg-clase: url('https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/clase.png');
+            --bg-clase-movil: url('https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/clasemovil.png');
+            --bg-ventana: url('https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/ventanainsti.png');
+            --bg-calle: url('https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/callekabum.png');
+            --bg-area-sur: url('https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/areasur.png');
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background-color: #000;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden; color: white;
+        }
+
+        #loading-screen, #menu-screen, #game-screen {
+            position: absolute; width: 100%; height: 100vh;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+        }
+
+        #loading-screen { z-index: 100; background: #000; }
+        #menu-screen { display: none; z-index: 10; background: #000; }
+        
+        #game-screen { 
+            display: none; 
+            background-size: cover; 
+            background-position: center; 
+            transition: background-image 0.8s ease-in-out;
+        }
+
+        #loading-bar-container { width: 300px; height: 20px; border: 2px solid #fff; margin: 20px; }
+        #loading-bar-fill { width: 0%; height: 100%; background: #00ff95; }
+
+        button {
+            padding: 15px 30px; font-size: 1.2rem; background: #fff;
+            color: #000; border: none; font-weight: bold; margin: 10px;
+            transition: transform 0.2s, background 0.2s;
+            z-index: 60;
+        }
+
+        button:hover { 
+            background: #00ff95; 
+            transform: scale(1.05);
+            cursor: var(--pixel-link-cursor), pointer !important;
+        }
+
+        #dialogue-box {
+            position: absolute; bottom: 40px; left: 50%;
+            transform: translateX(-50%); width: 85%; max-width: 900px;
+            background: rgba(0, 0, 0, 0.9); border: 4px solid #fff;
+            padding: 25px; min-height: 160px; z-index: 55;
+        }
+
+        #speaker-name { font-size: 1.5rem; color: #ffff00; margin-bottom: 10px; font-weight: bold; }
+        #dialogue-text { font-size: 1.3rem; line-height: 1.4; white-space: pre-wrap; }
+        #next-indicator { position: absolute; bottom: 15px; right: 20px; color: #ffff00; display: none; animation: blink 0.8s infinite; }
+
+        #options-container {
+            position: absolute; top: 40%; left: 50%;
+            transform: translate(-50%, -50%);
+            display: none; flex-direction: column; gap: 20px; z-index: 60;
+        }
+
+        .target {
+            position: absolute; width: 80px; height: 80px;
+            background: #808080; border: 2px solid #fff;
+            transition: opacity 3s linear; z-index: 70;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <div id="loading-screen">
+        <h1 style="color:#ff4500">Pancho History</h1>
+        <div id="loading-bar-container"><div id="loading-bar-fill"></div></div>
+        <div id="loading-text">Cargando recursos...</div>
+    </div>
+
+    <div id="menu-screen">
+        <h1>JuegosBoti</h1>
+        <p style="color:#ffff00">Pancho History</p>
+        <button id="play-btn">PLAY</button>
+    </div>
+
+    <div id="game-screen">
+        <div id="options-container"></div>
+        <div id="dialogue-box">
+            <div id="speaker-name"></div>
+            <div id="dialogue-text"></div>
+            <div id="next-indicator">▼ CLIC</div>
+        </div>
+    </div>
+
+    <script>
+        const ui = {
+            loading: document.getElementById('loading-screen'),
+            bar: document.getElementById('loading-bar-fill'),
+            menu: document.getElementById('menu-screen'),
+            game: document.getElementById('game-screen'),
+            name: document.getElementById('speaker-name'),
+            text: document.getElementById('dialogue-text'),
+            indicator: document.getElementById('next-indicator'),
+            options: document.getElementById('options-container'),
+            box: document.getElementById('dialogue-box')
+        };
+
+        const typeSound = new Audio('https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/click.mp3');
+        typeSound.loop = true;
+
+        const resources = [
+            'https://github.com/dariosfiles/juegesillo/raw/refs/heads/main/pixel.cur',
+            'https://github.com/dariosfiles/juegesillo/raw/refs/heads/main/pixellink.cur',
+            'https://github.com/dariosfiles/juegesillo/blob/main/casabasura.jpg?raw=true',
+            'https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/casaconpanchito.png',
+            'https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/panchoojosrojos.png',
+            'https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/corriendopancho.png',
+            'https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/desokupasfinal.png',
+            'https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/okupahub.png',
+            'https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/femboypancho.png',
+            'https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/zaguillini.png',
+            'https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/peleasergio.png',
+            'https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/dadovueltasergio.png',
+            'https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/clase.png',
+            'https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/clasemovil.png',
+            'https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/ventanainsti.png',
+            'https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/callekabum.png',
+            'https://raw.githubusercontent.com/dariosfiles/juegesillo/refs/heads/main/areasur.png'
+        ];
+
+        let historia = [
+            { n: "Sergio", m: "Has encontrado una casa abandonada, dicen que aqui vive el Pancho...", f: "var(--bg-casa-basura)" },
+            { n: "Zagui", m: "Seguro que aqui esta el panchito metido en mi coca", f: "var(--bg-casa-basura)" },
+            { n: "Sergio", m: "Y si mejor no entramos? Me da miedo.", f: "var(--bg-casa-basura)" },
+            { n: "Tú", m: "Callate ya Sergio, que tu partes techos y ahora te da miedo entrar aquí.", f: "var(--bg-casa-basura)" },
+            { n: "Tú", m: "HOSTIA! EL PANCHO!", f: "var(--bg-casa-pancho)" },
+            { n: "Pancho", m: "¿Qué haces aqui? Esta es mi casa, y en mi casa, ¡SOLO OCUPO YO! FUERA ANTES DE QUE TE COMA", f: "var(--bg-pancho-ojos)", decision: "main" }
+        ];
+
+        let indiceActual = 0;
+        let estaEscribiendo = false;
+        let timer;
+        let esperandoEscena = false;
+        let enPelea = false;
+        let spawnInterval;
+        let gameTimer;
+
+        function load() {
+            let count = 0;
+            resources.forEach(url => {
+                const img = new Image();
+                img.onload = img.onerror = () => {
+                    count++;
+                    ui.bar.style.width = (count/resources.length)*100 + '%';
+                    if(count === resources.length) setTimeout(initMenu, 500);
+                };
+                img.src = url;
+            });
+        }
+
+        function initMenu() {
+            document.documentElement.style.setProperty('--custom-cursor', `var(--pixel-cursor-url), auto`);
+            ui.loading.style.display = 'none';
+            ui.menu.style.display = 'flex';
+        }
+
+        document.getElementById('play-btn').onclick = () => {
+            ui.menu.style.display = 'none';
+            ui.game.style.display = 'block';
+            render();
+        };
+
+        function render() {
+            if (indiceActual >= historia.length) return;
+            esperandoEscena = false;
+            ui.indicator.style.display = 'none';
+            const d = historia[indiceActual];
+            
+            // Caso pantalla negra
+            if(d.f === "black") ui.game.style.backgroundColor = "black", ui.game.style.backgroundImage = "none";
+            else ui.game.style.backgroundImage = d.f;
+
+            ui.name.innerText = d.n;
+            if(d.n === "Pancho" || d.n === "Zaguilla Malvado") ui.name.style.color = "#ff0000";
+            else ui.name.style.color = "#ffff00";
+
+            type(d.m);
+        }
+
+        function type(txt) {
+            estaEscribiendo = true;
+            ui.text.textContent = "";
+            let i = 0;
+            clearInterval(timer);
+            typeSound.currentTime = 0;
+            typeSound.play().catch(e => {});
+
+            timer = setInterval(() => {
+                if(i < txt.length) { 
+                    ui.text.textContent += txt[i]; 
+                    i++; 
+                } else { 
+                    stopTyping();
+                }
+            }, 40);
+        }
+
+        function stopTyping() {
+            clearInterval(timer);
+            estaEscribiendo = false;
+            typeSound.pause();
+            if(historia[indiceActual].decision) showOptions(historia[indiceActual].decision);
+            else ui.indicator.style.display = 'block';
+        }
+
+        function showOptions(tipo) {
+            ui.options.innerHTML = '';
+            ui.options.style.display = 'flex';
+            if(tipo === "main") {
+                ui.options.appendChild(crearBoton("Decirle que le vas a pegar", () => {
+                    ui.options.style.display = 'none';
+                    historia.push({ n: "Pancho", m: "¿Estas seguro?", f: "var(--bg-pancho-ojos)", decision: "confirmar_pelea" });
+                    indiceActual++; render();
+                }));
+                ui.options.appendChild(crearBoton("Decirle que vas a llamar a los desokupas", () => {
+                    ui.options.style.display = 'none';
+                    historia.push({ n: "Tú", m: "Estoy llamando a los desokupas...", f: "var(--bg-pancho-ojos)", triggerDesokupa: true });
+                    indiceActual++; render();
+                }));
+            } 
+            else if(tipo === "confirmar_pelea") {
+                ui.options.appendChild(crearBoton("Investigar más", () => {
+                    ui.options.style.display = 'none';
+                    historia.push({ n: "Zaguilla Malvado", m: "Que estas haciendo aqui...", f: "var(--bg-zaguilla)", autoReset: true });
+                    indiceActual++; render();
+                }));
+                ui.options.appendChild(crearBoton("Pelear", () => {
+                    ui.options.style.display = 'none';
+                    historia.push({ n: "Pancho", m: "Vale, esta bien, pero no será conmigo... Será con tu amigo Sergio.", f: "var(--bg-pancho-ojos)", triggerPeleaExplicacion: true });
+                    indiceActual++; render();
+                }));
+            }
+        }
+
+        function crearBoton(texto, accion) {
+            const btn = document.createElement('button');
+            btn.innerText = texto;
+            btn.onclick = accion;
+            return btn;
+        }
+
+        function iniciarMinijuego() {
+            enPelea = true;
+            ui.box.style.display = 'none';
+            ui.game.style.backgroundImage = "var(--bg-pelea)";
+            spawnInterval = setInterval(() => { crearBloque(); }, 1000);
+            gameTimer = setTimeout(() => { finalizarPelea(true); }, 30000);
+        }
+
+        function crearBloque() {
+            if(!enPelea) return;
+            const b = document.createElement('div');
+            b.className = 'target';
+            b.style.left = Math.random() * (window.innerWidth - 100) + 'px';
+            b.style.top = Math.random() * (window.innerHeight - 100) + 'px';
+            ui.game.appendChild(b);
+            const failTimer = setTimeout(() => { if(b.parentNode) finalizarPelea(false); }, 3000);
+            b.onclick = (e) => { e.stopPropagation(); clearTimeout(failTimer); b.remove(); };
+            setTimeout(() => { b.style.opacity = '0'; }, 10);
+        }
+
+        function finalizarPelea(victoria) {
+            enPelea = false;
+            clearInterval(spawnInterval);
+            clearTimeout(gameTimer);
+            document.querySelectorAll('.target').forEach(t => t.remove());
+            ui.box.style.display = 'block';
+            if(victoria) {
+                historia.push({ n: "Sergio", m: "Has ganado", f: "var(--bg-pelea)", triggerWinSequence: true });
+            } else {
+                historia.push({ n: "Sergio", m: "Pues has perdido, que le vamos a hacer.", f: "var(--bg-pelea)", autoReset: true });
+            }
+            indiceActual++; render();
+        }
+
+        ui.game.onclick = () => {
+            if(estaEscribiendo || ui.options.style.display === 'flex' || esperandoEscena || enPelea) return;
+            const actual = historia[indiceActual];
+            if(actual.autoReset) { location.reload(); return; }
+
+            if(actual.triggerPeleaExplicacion) {
+                historia.push({ n: "Pancho", m: "La pelea será simple. Cuando aparezcan los bloques grises, tocalos, no dejes que desaparezcan o te pegará un piedrazo.", f: "var(--bg-pancho-ojos)", startCombat: true });
+                indiceActual++; render(); return;
+            }
+
+            if(actual.startCombat) { iniciarMinijuego(); return; }
+
+            // SECUENCIA DE VICTORIA E INSTITUTO
+            if(actual.triggerWinSequence) {
+                historia.push({ n: "Sergio", m: "Venga vamos, que llegaremos tarde al instituto, que ya nos hemos pegado demasiado tiempo aqui haciendo el tonto.", f: "var(--bg-sergio-vueltas)" });
+                historia.push({ n: "Tú", m: "Que aburrimiento, no se si debería cojer el movil, pero lo voy a hacer igual", f: "var(--bg-clase)" });
+                historia.push({ n: "Tú", m: "Ahora sí, estaba muy harto de estar en clase sin hacer nada.", f: "var(--bg-clase-movil)", triggerEscape: true });
+                indiceActual++; render(); return;
+            }
+
+            // NUEVA SECUENCIA: ESCAPE Y ÁREA SUR
+            if(actual.triggerEscape) {
+                historia.push({ n: "Tú", m: "Ostia, he encontrado un video de como escaparme del instituto, me esta dando muchas ganas pero se que no debo de hacerlo...", f: "var(--bg-clase-movil)" });
+                historia.push({ n: "Tú", m: "No está tan alto... Podría escaparme si quiero...", f: "var(--bg-ventana)" });
+                historia.push({ n: "Tú", m: "Si me escapo, voy a ultramarinos Jairito y me compro una monster", f: "var(--bg-ventana)" });
+                historia.push({ n: "Tú", m: "Mejor que en el instituto estoy, espero no encontrarme con el Pancho, que si no me roba el monster", f: "var(--bg-calle)" });
+                historia.push({ n: "Tú", m: "Voy a ir a dar una vuelta de compras, me aburro mucho", f: "black" });
+                historia.push({ n: "Tú", m: "A ver, he comprado algunas cosas pero no tengo mucho dinero, creo que en un rato me iré", f: "var(--bg-area-sur)", autoReset: true });
+                indiceActual++; render(); return;
+            }
+
+            if(actual.triggerDesokupa) {
+                esperandoEscena = true;
+                ui.indicator.style.display = 'none';
+                ui.name.innerText = ""; ui.text.textContent = "...";
+                setTimeout(() => {
+                    ui.game.style.backgroundImage = "var(--bg-desokupas)";
+                    setTimeout(() => {
+                        historia.push({ n: "Sergio", m: "Pues lo han pillado al okupa.", f: "var(--bg-desokupas)", autoReset: true });
+                        indiceActual++; render();
+                    }, 3000);
+                }, 2000);
+                return;
+            }
+
+            indiceActual++;
+            if(indiceActual < historia.length) render();
+            else location.reload();
+        };
+
+        window.onload = load;
+    </script>
+</body>
+</html>
