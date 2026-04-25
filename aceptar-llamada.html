@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>PULSAME</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100dvh;
+    font-family: 'Segoe UI', sans-serif;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* ── LANDING SCREEN ── */
+  #landing {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+  }
+
+  #pulse-btn {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #25d366, #075e54);
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-align: center;
+    padding: 20px;
+    box-shadow: 0 0 0 0 rgba(37,211,102,.5);
+    animation: pulse 2s infinite;
+    transition: transform .1s;
+  }
+  #pulse-btn:active { transform: scale(.94); }
+
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(37,211,102,.55); }
+    70%  { box-shadow: 0 0 0 30px rgba(37,211,102,0); }
+    100% { box-shadow: 0 0 0 0 rgba(37,211,102,0); }
+  }
+
+  #no-touch-msg {
+    display: none;
+    color: #ff4e4e;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-align: center;
+    padding: 20px;
+    text-shadow: 0 0 14px rgba(255,78,78,.6);
+  }
+
+  /* ── INCOMING CALL SCREEN ── */
+  #call-screen {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 60px 0 50px;
+    z-index: 100;
+  }
+
+  .call-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .call-status {
+    color: rgba(255,255,255,.7);
+    font-size: .95rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+
+  .contact-name {
+    color: #fff;
+    font-size: 2.4rem;
+    font-weight: 300;
+    letter-spacing: .02em;
+  }
+
+  .contact-pic {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid rgba(255,255,255,.2);
+    box-shadow: 0 8px 32px rgba(0,0,0,.5);
+    margin-top: 10px;
+  }
+
+  /* call duration (hidden initially) */
+  #call-duration {
+    display: none;
+    color: rgba(255,255,255,.75);
+    font-size: 1.05rem;
+    margin-top: 4px;
+    letter-spacing: .06em;
+  }
+
+  /* ── BUTTONS ROW ── */
+  #btn-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    width: 100%;
+    padding: 0 30px;
+  }
+
+  /* hang-up button */
+  .btn-hangup {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: #e53935;
+    border: none;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 20px rgba(229,57,53,.55);
+    cursor: pointer;
+  }
+  .btn-hangup svg { width: 32px; height: 32px; fill: #fff; }
+
+  /* slide-up accept */
+  #accept-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  #accept-track {
+    width: 72px;
+    height: 140px;
+    background: rgba(255,255,255,.08);
+    border-radius: 36px;
+    position: relative;
+    overflow: hidden;
+    border: 1.5px solid rgba(255,255,255,.15);
+  }
+
+  #accept-thumb {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: #25d366;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 20px rgba(37,211,102,.55);
+    cursor: grab;
+    touch-action: none;
+    transition: bottom .1s ease;
+  }
+  #accept-thumb svg { width: 32px; height: 32px; fill: #fff; }
+
+  #accept-label {
+    color: rgba(255,255,255,.6);
+    font-size: .78rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  /* arrow hint animation */
+  @keyframes bounce-up {
+    0%, 100% { opacity: .3; transform: translateY(0); }
+    50%  { opacity: 1;  transform: translateY(-6px); }
+  }
+  .arrow-hint {
+    position: absolute;
+    bottom: 74px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; gap: 2px;
+    pointer-events: none;
+  }
+  .arrow-hint span {
+    display: block;
+    width: 10px; height: 10px;
+    border-top: 2px solid rgba(255,255,255,.5);
+    border-right: 2px solid rgba(255,255,255,.5);
+    transform: rotate(-45deg);
+    margin: 0 auto;
+    animation: bounce-up 1.2s infinite;
+  }
+  .arrow-hint span:nth-child(2) { animation-delay: .15s; }
+  .arrow-hint span:nth-child(3) { animation-delay: .3s; }
+
+  /* ── HUNG UP OVERLAY ── */
+  #hung-up-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.7);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    animation: fadeIn .4s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  #hung-up-overlay .msg {
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 500;
+    text-align: center;
+    padding: 0 30px;
+  }
+  #hung-up-overlay .sub {
+    color: rgba(255,255,255,.5);
+    font-size: .9rem;
+  }
+</style>
+</head>
+<body>
+
+<!-- LANDING -->
+<div id="landing">
+  <button id="pulse-btn" onclick="handleTap()">PULSAME PARA CONTINUAR!</button>
+  <div id="no-touch-msg">NO PUEDES USARME AQUI</div>
+</div>
+
+<!-- INCOMING CALL -->
+<div id="call-screen">
+  <div class="call-top">
+    <div class="call-status">Llamada entrante</div>
+    <div class="contact-name">Friend</div>
+    <img class="contact-pic" src="https://i.imgflip.com/7c04fj.jpg" alt="Friend">
+    <div id="call-duration"></div>
+  </div>
+
+  <div id="btn-row">
+    <!-- Hang up (does nothing) -->
+    <button class="btn-hangup" onclick="void(0)" title="Colgar">
+      <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
+    </button>
+
+    <!-- Slide-up accept -->
+    <div id="accept-wrapper">
+      <div id="accept-track">
+        <div class="arrow-hint">
+          <span></span><span></span><span></span>
+        </div>
+        <div id="accept-thumb" id="accept-thumb">
+          <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
+        </div>
+      </div>
+      <div id="accept-label">desliza arriba</div>
+    </div>
+  </div>
+</div>
+
+<!-- HUNG UP -->
+<div id="hung-up-overlay">
+  <div class="msg">Friend ha colgado</div>
+  <div class="sub">Llamada finalizada</div>
+</div>
+
+<audio id="ring-audio" loop preload="auto"></audio>
+
+<script>
+  const hasTouch = () => navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
+
+  function handleTap() {
+    if (!hasTouch()) {
+      document.getElementById('no-touch-msg').style.display = 'block';
+      return;
+    }
+    goFullscreen();
+  }
+
+  function goFullscreen() {
+    const el = document.documentElement;
+    const req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+    if (req) req.call(el).catch(() => {});
+    showCallScreen();
+  }
+
+  function showCallScreen() {
+    document.getElementById('landing').style.display = 'none';
+    const cs = document.getElementById('call-screen');
+    cs.style.display = 'flex';
+    startRingtone();
+    setupSlider();
+  }
+
+  /* ── RINGTONE ── */
+  function startRingtone() {
+    const audio = document.getElementById('ring-audio');
+    // Catbox needs a referrer / user-agent tweak – we proxy via fetch+blob
+    fetch('https://files.catbox.moe/7ei131.mp3', {
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; AudioFetch/1.0)' }
+    })
+    .then(r => r.blob())
+    .then(blob => {
+      audio.src = URL.createObjectURL(blob);
+      audio.play().catch(() => {});
+    })
+    .catch(() => {
+      // fallback: try direct (may work on some browsers)
+      audio.src = 'https://files.catbox.moe/7ei131.mp3';
+      audio.play().catch(() => {});
+    });
+  }
+
+  /* ── SLIDE-UP ACCEPT ── */
+  function setupSlider() {
+    const track = document.getElementById('accept-track');
+    const thumb = document.getElementById('accept-thumb');
+    const trackH = 140;
+    const thumbH = 72;
+    const maxTravel = trackH - thumbH; // 68px
+    let startY = null;
+    let currentBottom = 0;
+
+    function getY(e) {
+      return e.touches ? e.touches[0].clientY : e.clientY;
+    }
+
+    function onStart(e) {
+      startY = getY(e);
+      thumb.style.transition = 'none';
+      e.preventDefault();
+    }
+
+    function onMove(e) {
+      if (startY === null) return;
+      const dy = startY - getY(e);
+      currentBottom = Math.max(0, Math.min(maxTravel, dy));
+      thumb.style.bottom = currentBottom + 'px';
+      e.preventDefault();
+    }
+
+    function onEnd(e) {
+      if (startY === null) return;
+      startY = null;
+      if (currentBottom >= maxTravel * 0.75) {
+        // accepted!
+        thumb.style.transition = 'bottom .2s ease';
+        thumb.style.bottom = maxTravel + 'px';
+        setTimeout(acceptCall, 200);
+      } else {
+        // snap back
+        thumb.style.transition = 'bottom .25s ease';
+        thumb.style.bottom = '0px';
+        currentBottom = 0;
+      }
+    }
+
+    thumb.addEventListener('touchstart', onStart, { passive: false });
+    thumb.addEventListener('touchmove',  onMove,  { passive: false });
+    thumb.addEventListener('touchend',   onEnd);
+    thumb.addEventListener('mousedown',  onStart);
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup',   onEnd);
+  }
+
+  /* ── CALL ACCEPTED ── */
+  let callSeconds = 0;
+  let timerInterval = null;
+  let hangupTimeout = null;
+
+  function acceptCall() {
+    // Stop ringtone
+    const audio = document.getElementById('ring-audio');
+    audio.pause();
+    audio.currentTime = 0;
+
+    // Hide buttons, show duration
+    document.getElementById('btn-row').style.display = 'none';
+    document.getElementById('accept-wrapper').style.display = 'none';
+    document.querySelector('.call-status').textContent = 'Llamada en curso';
+
+    const durEl = document.getElementById('call-duration');
+    durEl.style.display = 'block';
+    durEl.textContent = '0:00';
+
+    timerInterval = setInterval(() => {
+      callSeconds++;
+      const m = Math.floor(callSeconds / 60);
+      const s = callSeconds % 60;
+      durEl.textContent = m + ':' + String(s).padStart(2, '0');
+    }, 1000);
+
+    // After 10s friend hangs up
+    hangupTimeout = setTimeout(friendHangsUp, 10000);
+  }
+
+  function friendHangsUp() {
+    clearInterval(timerInterval);
+    const audio = document.getElementById('ring-audio');
+    audio.pause();
+
+    const overlay = document.getElementById('hung-up-overlay');
+    overlay.style.display = 'flex';
+
+    // exit fullscreen after 2s
+    setTimeout(() => {
+      if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+    }, 2000);
+  }
+</script>
+</body>
+</html>
