@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Oreo Stars!</title>
+<title>Oreo Stars! ⭐</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{width:100%;height:100%;overflow:hidden;background:#0d0d1a;}
@@ -413,8 +413,14 @@ function update(dt){
     if(keys['s']||keys['arrowdown'])dy=1;
     if(keys['a']||keys['arrowleft'])dx=-1; if(joystick.active) dx=joystick.dx;
     if(keys['d']||keys['arrowright'])dx=1;
+    // normalize diagonal
     if(dx&&dy){dx*=0.7071;dy*=0.7071;}
-    player.x+=dx*PLAYER_SPD;player.y+=dy*PLAYER_SPD;
+
+    // mobile speed boost
+    let speedMultiplier = (typeof joystick !== 'undefined' && joystick.active) ? 2.2 : 1;
+
+    player.x += dx * PLAYER_SPD * speedMultiplier;
+    player.y += dy * PLAYER_SPD * speedMultiplier;
     resolveCovers(player,player.r);
     if(player.flashTimer>0)player.flashTimer--;
 
