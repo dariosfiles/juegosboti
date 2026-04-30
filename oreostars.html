@@ -438,7 +438,7 @@ function update(dt){
   for(const bot of bots){
     if(!bot.alive){
       bot.deadTimer--;
-      if(bot.deadTimer<=0){bot.x=bot.spawnX+(Math.random()-0.5)*80;bot.y=bot.spawnY+(Math.random()-0.5)*80;bot.hp=100;bot.alive=true;bot.flashTimer=0;bot.shootCd=B_SHOOT_CD();}
+      if(bot.deadTimer<=0){bot.x=bot.spawnX+(Math.random()-0.5)*80;bot.y=bot.spawnY+(Math.random()-0.5)*80;bot.hp=400;bot.alive=true;bot.flashTimer=0;bot.shootCd=B_SHOOT_CD();}
       continue;
     }
     if(bot.flashTimer>0)bot.flashTimer--;
@@ -604,6 +604,7 @@ function drawCharHUD(sx,sy,hp,maxHp,name,isPlayer){
 }
 
 
+
 // ======================== MOBILE JOYSTICK ========================
 let joystick = {active:false, startX:0, startY:0, dx:0, dy:0};
 
@@ -621,6 +622,18 @@ if(isMobile()){
   joy.style.borderRadius='50%';
   joy.style.background='rgba(255,255,255,0.1)';
   joy.style.zIndex='50';
+
+  const knob = document.createElement('div');
+  knob.style.position='absolute';
+  knob.style.left='50%';
+  knob.style.top='50%';
+  knob.style.width='50px';
+  knob.style.height='50px';
+  knob.style.transform='translate(-50%,-50%)';
+  knob.style.borderRadius='50%';
+  knob.style.background='rgba(255,255,255,0.4)';
+  joy.appendChild(knob);
+
   document.body.appendChild(joy);
 
   joy.addEventListener('touchstart',e=>{
@@ -632,14 +645,27 @@ if(isMobile()){
 
   joy.addEventListener('touchmove',e=>{
     const t=e.touches[0];
-    joystick.dx=(t.clientX-joystick.startX)/40;
-    joystick.dy=(t.clientY-joystick.startY)/40;
+    let dx=t.clientX-joystick.startX;
+    let dy=t.clientY-joystick.startY;
+
+    const max=40;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist>max){
+      dx=dx/dist*max;
+      dy=dy/dist*max;
+    }
+
+    joystick.dx=dx/40;
+    joystick.dy=dy/40;
+
+    knob.style.transform=`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
   });
 
   joy.addEventListener('touchend',()=>{
     joystick.active=false;
     joystick.dx=0;
     joystick.dy=0;
+    knob.style.transform='translate(-50%,-50%)';
   });
 }
 
