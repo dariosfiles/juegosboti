@@ -1,585 +1,451 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JuegosBoti.Xyz</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gooner Bob Clicker</title>
+    <style>
+        :root {
+            --primary-yellow: #f9d71c;
+            --secondary-blue: #008cff;
+            --accent-pink: #ff69b4;
+            --bg-color: #a5f3fc;
+            --shop-bg: #ffffff;
+        }
 
-<link rel="icon" type="image/x-icon" href="https://juegosboti.xyz/siteicon.ico">
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+            background-color: var(--bg-color);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
+        }
 
-<meta property="og:title" content="Juegosboti.xyz" />
-<meta property="og:description" content="The best gaming products." />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://juegosboti.xyz" />
-<meta property="og:image" content="https://juegosboti.xyz/siteicon.ico" />
-<meta name="theme-color" content="#00f0ff">
+        /* --- PRELOADER --- */
+        #preloader {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.6s ease;
+        }
 
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Juegosboti.xyz">
-<meta name="twitter:description" content="The best gaming products.">
+        .spinner {
+            width: 60px; height: 60px;
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid var(--secondary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
 
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<script src="https://sellauth.com/assets/js/sellauth-embed-2.js"></script>
-<style>
-  :root {
-    --bg: #050810;
-    --surface: #0b1120;
-    --surface2: #0f1830;
-    --accent: #00f0ff;
-    --accent2: #7b2fff;
-    --accent3: #ff2f7b;
-    --text: #e8f4ff;
-    --muted: #5a7a99;
-    --border: rgba(0, 240, 255, 0.15);
-    --glow: 0 0 20px rgba(0, 240, 255, 0.3);
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Rajdhani', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-  }
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image:
-      linear-gradient(rgba(0,240,255,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,240,255,0.03) 1px, transparent 1px);
-    background-size: 60px 60px;
-    pointer-events: none; z-index: 0;
-  }
-  body::after {
-    content: '';
-    position: fixed; top: -20%; left: 50%;
-    transform: translateX(-50%);
-    width: 80vw; height: 80vw;
-    background: radial-gradient(ellipse, rgba(123,47,255,0.08) 0%, transparent 65%);
-    pointer-events: none; z-index: 0;
-  }
+        #loader-text { margin-top: 20px; font-size: 1.8rem; font-weight: bold; color: #333; }
+        .loaded-status { color: #2ecc71 !important; }
 
-  /* HEADER */
-  header {
-    position: relative; z-index: 10;
-    padding: 0 3rem; height: 80px;
-    display: flex; align-items: center; justify-content: space-between;
-    border-bottom: 1px solid var(--border);
-    background: rgba(5,8,16,0.85);
-    backdrop-filter: blur(12px);
-  }
-  .logo {
-    font-family: 'Orbitron', monospace;
-    font-size: 1.4rem; font-weight: 900; letter-spacing: 0.05em;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  }
-  .logo-dot { -webkit-text-fill-color: var(--accent3); color: var(--accent3); }
-  .logo-badge {
-    font-family: 'Share Tech Mono', monospace; font-size: 0.6rem;
-    color: var(--accent); border: 1px solid var(--accent);
-    padding: 2px 6px; border-radius: 2px; margin-left: 10px;
-    letter-spacing: 0.15em; vertical-align: middle; position: relative; top: -2px;
-    opacity: 0.7; -webkit-text-fill-color: var(--accent);
-  }
-  nav { display: flex; gap: 2.5rem; align-items: center; }
-  nav a {
-    font-family: 'Rajdhani', sans-serif; font-size: 0.85rem; font-weight: 600;
-    letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
-    text-decoration: none; transition: color 0.2s;
-    cursor: pointer;
-  }
-  nav a:hover { color: var(--accent); }
-  .nav-cta {
-    font-size: 0.8rem !important; font-weight: 700 !important;
-    color: var(--bg) !important; background: var(--accent);
-    padding: 8px 20px; border-radius: 3px;
-    transition: box-shadow 0.2s, opacity 0.2s;
-  }
-  .nav-cta:hover { box-shadow: var(--glow); opacity: 0.9; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-  /* HERO */
-  .hero {
-    position: relative; z-index: 5;
-    text-align: center; padding: 6rem 2rem 4rem;
-  }
-  .hero-eyebrow {
-    font-family: 'Share Tech Mono', monospace; font-size: 0.72rem;
-    letter-spacing: 0.35em; color: var(--accent); text-transform: uppercase;
-    margin-bottom: 1.5rem; opacity: 0.8;
-    animation: fadeInDown 0.6s ease both;
-  }
-  .hero h1 {
-    font-family: 'Orbitron', monospace;
-    font-size: clamp(2.5rem, 6vw, 5.5rem); font-weight: 900;
-    line-height: 1.05; margin-bottom: 1.5rem;
-    background: linear-gradient(135deg, #fff 30%, var(--accent) 65%, var(--accent2) 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    animation: fadeInDown 0.7s 0.1s ease both;
-  }
-  .hero p {
-    font-size: 1.1rem; color: var(--muted);
-    max-width: 520px; margin: 0 auto; line-height: 1.6;
-    animation: fadeInDown 0.7s 0.2s ease both;
-  }
+        /* --- LAYOUT --- */
+        #game-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
 
-  /* DIVIDER */
-  .divider {
-    display: flex; align-items: center; gap: 1.5rem;
-    max-width: 900px; margin: 3rem auto; padding: 0 2rem;
-    position: relative; z-index: 5;
-  }
-  .divider-line { flex: 1; height: 1px; background: var(--border); }
-  .divider-icon {
-    font-family: 'Share Tech Mono', monospace; font-size: 0.65rem;
-    color: var(--accent); letter-spacing: 0.2em; opacity: 0.5; white-space: nowrap;
-  }
+        #shop-container {
+            width: 350px;
+            background: var(--shop-bg);
+            border-left: 6px solid var(--secondary-blue);
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: -5px 0 20px rgba(0,0,0,0.1);
+        }
 
-  /* SCROLLABLE PRODUCTS SECTION */
-  .products-section {
-    position: relative; z-index: 5;
-    max-width: 1200px; margin: 0 auto 5rem; padding: 0 2rem;
-  }
-  .section-label {
-    font-family: 'Share Tech Mono', monospace; font-size: 0.7rem;
-    letter-spacing: 0.35em; color: var(--accent2); text-transform: uppercase;
-    margin-bottom: 0.5rem; opacity: 0.8;
-  }
-  .section-heading {
-    font-family: 'Orbitron', monospace;
-    font-size: clamp(1.2rem, 3vw, 1.8rem); font-weight: 700;
-    margin-bottom: 2.5rem; color: var(--text);
-  }
+        #stats {
+            position: absolute;
+            top: 20px;
+            text-align: center;
+            background: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            border: 4px solid var(--secondary-blue);
+            box-shadow: 0 6px 0 var(--secondary-blue);
+        }
 
-  .products-scroll-container {
-    max-height: 650px;
-    overflow-y: auto;
-    padding-right: 15px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--accent2) var(--surface);
-  }
-  .products-scroll-container::-webkit-scrollbar { width: 6px; }
-  .products-scroll-container::-webkit-scrollbar-track { background: var(--surface); }
-  .products-scroll-container::-webkit-scrollbar-thumb { background: var(--accent2); border-radius: 10px; }
+        h1 { margin: 0; font-size: 2.2rem; color: #222; }
+        #pps-display { font-weight: bold; color: #666; margin-top: 5px; }
 
-  .products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 1.5rem;
-    padding-bottom: 20px;
-  }
+        /* --- CHARACTER --- */
+        #bob-container {
+            cursor: pointer;
+            transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
 
-  .product-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 8px; overflow: hidden;
-    transition: border-color 0.25s, transform 0.2s, box-shadow 0.25s;
-    display: flex; flex-direction: column; position: relative;
-  }
-  .product-card::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, var(--accent2), var(--accent));
-    opacity: 0; transition: opacity 0.3s;
-  }
-  .product-card:hover { border-color: rgba(0,240,255,0.4); transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,240,255,0.1); }
-  .product-card:hover::before { opacity: 1; }
-  
-  .product-img-wrap {
-    width: 100%; aspect-ratio: 1 / 1;
-    background: var(--surface2); overflow: hidden;
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
-  }
-  .product-img-wrap img {
-    width: 100%; height: 100%; object-fit: cover;
-    transition: transform 0.4s;
-  }
-  
-  .product-price-tag {
-    position: absolute; bottom: 10px; right: 10px;
-    background: rgba(11, 17, 32, 0.9);
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.9rem; font-weight: 700;
-    padding: 4px 10px; border-radius: 4px;
-    backdrop-filter: blur(4px);
-    z-index: 2;
-  }
+        #bob-image {
+            width: 320px; height: auto;
+            filter: drop-shadow(0 15px 20px rgba(0,0,0,0.15));
+        }
 
-  .product-info { padding: 1.2rem 1.4rem 1.4rem; display: flex; flex-direction: column; flex: 1; }
-  .product-title {
-    font-family: 'Orbitron', monospace; font-size: 0.82rem; font-weight: 700;
-    color: var(--text); margin-bottom: 0.6rem; letter-spacing: 0.03em; line-height: 1.4;
-  }
-  .product-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.55; flex: 1; margin-bottom: 1.2rem; }
+        .bounce-effect { animation: bounce 0.3s ease-out; }
+        @keyframes bounce { 0% { transform: scale(1); } 50% { transform: scale(0.92); } 100% { transform: scale(1); } }
 
-  .sellauth-button {
-    font-family: 'Rajdhani', sans-serif !important;
-    font-size: 0.8rem !important; font-weight: 700 !important;
-    letter-spacing: 0.18em !important; text-transform: uppercase !important;
-    color: var(--bg) !important;
-    background: linear-gradient(135deg, var(--accent), var(--accent2)) !important;
-    border: none !important; padding: 11px 20px !important;
-    border-radius: 4px !important; cursor: pointer !important;
-    width: 100% !important; display: flex !important;
-    align-items: center !important; justify-content: center !important;
-    gap: 8px !important; transition: box-shadow 0.2s, opacity 0.2s !important;
-  }
-  .sellauth-button:hover { box-shadow: var(--glow) !important; opacity: 0.9 !important; }
+        /* --- SHOP ITEMS --- */
+        .shop-item {
+            background: #f9f9f9;
+            border: 3px solid #eee;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
 
-  .delivery-banner { position: relative; z-index: 5; max-width: 900px; margin: 0 auto 5rem; padding: 0 2rem; }
-  .delivery-box {
-    background: linear-gradient(135deg, rgba(0,240,255,0.05), rgba(123,47,255,0.05));
-    border: 1px solid var(--accent); border-radius: 8px;
-    padding: 2.5rem 3rem; display: flex; align-items: center; gap: 2.5rem;
-    box-shadow: 0 0 40px rgba(0,240,255,0.07);
-  }
-  .delivery-icon-wrap { font-size: 3rem; flex-shrink: 0; filter: drop-shadow(0 0 12px rgba(0,240,255,0.5)); }
-  .delivery-box h3 { font-family: 'Orbitron', monospace; font-size: 1rem; font-weight: 700; color: var(--accent); margin-bottom: 0.6rem; }
-  .delivery-box p { font-size: 0.95rem; color: var(--muted); line-height: 1.65; }
+        .shop-item:hover:not(.disabled) {
+            border-color: var(--secondary-blue);
+            transform: translateY(-2px);
+            background: #fff;
+        }
 
-  footer {
-    position: relative; z-index: 5; margin-top: auto;
-    border-top: 1px solid var(--border); padding: 2rem 3rem;
-    display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 1rem; background: rgba(5,8,16,0.9);
-  }
-  .footer-left { font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em; }
-  .tos-link {
-    font-family: 'Rajdhani', sans-serif; font-size: 0.82rem; font-weight: 600;
-    letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted);
-    cursor: pointer; border: none; background: none; transition: color 0.2s;
-  }
+        .shop-item.disabled {
+            background: #e0e0e0;
+            opacity: 0.7;
+            cursor: not-allowed;
+            border-color: #bbb;
+        }
 
-  .modal-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(5,8,16,0.88); backdrop-filter: blur(8px);
-    z-index: 1000; align-items: center; justify-content: center; padding: 2rem;
-  }
-  .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
-  .modal {
-    background: var(--surface); border: 1px solid var(--accent);
-    border-radius: 8px; max-width: 680px; width: 100%; max-height: 80vh;
-    display: flex; flex-direction: column;
-    box-shadow: 0 0 60px rgba(0, 240, 255, 0.15);
-    position: relative; overflow: hidden;
-    animation: modalIn 0.25s ease;
-  }
+        .item-name { display: block; font-weight: 900; font-size: 1.1rem; color: #333; }
+        .item-cost { color: #27ae60; font-weight: bold; font-size: 0.95rem; }
+        .item-desc { margin: 5px 0; font-size: 0.8rem; color: #777; }
 
-  #warningModal .modal, #supportModal .modal, #couponModal .modal {
-    max-width: 450px;
-    border-color: var(--accent3);
-    box-shadow: 0 0 60px rgba(255, 47, 123, 0.2);
-  }
-  #warningModal .modal::before, #supportModal .modal::before, #couponModal .modal::before {
-    background: linear-gradient(90deg, var(--accent3), var(--accent2));
-  }
-  #warningModal h2, #supportModal h2, #couponModal h2 {
-    color: var(--accent3);
-  }
+        /* --- NOTIFICATION STACK --- */
+        #notif-container {
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 2000;
+            pointer-events: none;
+        }
 
-  .modal::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, var(--accent2), var(--accent), var(--accent3));
-  }
-  .modal-header {
-    padding: 1.8rem 2rem 1.2rem; border-bottom: 1px solid var(--border);
-    display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-shrink: 0;
-  }
-  .modal-header h2 { font-family: 'Orbitron', monospace; font-size: 1rem; font-weight: 700; color: var(--accent); letter-spacing: 0.08em; }
-  .modal-header p { font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; color: var(--muted); margin-top: 4px; letter-spacing: 0.12em; }
-  .modal-close {
-    background: none; border: 1px solid var(--border); color: var(--muted);
-    cursor: pointer; width: 34px; height: 34px; border-radius: 4px; font-size: 1.1rem;
-    display: flex; align-items: center; justify-content: center; transition: all 0.2s;
-  }
-  .modal-close:hover { color: var(--accent); border-color: var(--accent); background: rgba(0,240,255,0.05); }
-  .modal-body {
-    padding: 2rem; overflow-y: auto; flex: 1;
-    scrollbar-width: thin; scrollbar-color: var(--accent2) var(--surface2);
-  }
-  .modal-body::-webkit-scrollbar { width: 5px; }
-  .modal-body::-webkit-scrollbar-track { background: var(--surface2); }
-  .modal-body::-webkit-scrollbar-thumb { background: var(--accent2); border-radius: 3px; }
-  .tos-section { margin-bottom: 2rem; }
-  .tos-section h3 {
-    font-family: 'Orbitron', monospace; font-size: 0.78rem; font-weight: 700;
-    color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase;
-    margin-bottom: 0.8rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
-  }
-  .tos-section p { font-family: 'Rajdhani', sans-serif; font-size: 0.95rem; color: #8aafcc; line-height: 1.75; }
-  .modal-footer { padding: 1.2rem 2rem; border-top: 1px solid var(--border); text-align: right; flex-shrink: 0; }
+        .notif {
+            background: #333;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            animation: slideIn 0.4s ease forwards, fadeOut 0.4s ease 2.5s forwards;
+            border-left: 5px solid var(--secondary-blue);
+        }
 
-  .btn-primary {
-    font-family: 'Rajdhani', sans-serif; font-size: 0.85rem; font-weight: 700;
-    letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--bg); background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border: none; padding: 14px 36px; border-radius: 3px; cursor: pointer;
-    transition: all 0.25s; display: inline-block;
-  }
-  .btn-primary:hover { box-shadow: 0 0 30px rgba(0,240,255,0.5); transform: translateY(-2px); }
+        .notif.error { border-left-color: #ff4757; }
+        .notif.success { border-left-color: #2ed573; }
 
-  .coupon-item {
-    background: var(--surface2);
-    border: 1px dashed var(--accent);
-    padding: 1rem;
-    margin-top: 1rem;
-    text-align: center;
-    border-radius: 4px;
-  }
-  .coupon-code {
-    font-family: 'Orbitron', monospace;
-    font-size: 1.2rem;
-    color: var(--accent);
-    display: block;
-    margin-bottom: 0.3rem;
-  }
+        @keyframes slideIn { from { transform: translateX(-120%); } to { transform: translateX(0); } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; transform: translateX(-20px); } }
 
-  .scanline {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
-    pointer-events: none; z-index: 1;
-  }
+        /* --- CONTROLS --- */
+        #audio-toggle {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: white;
+            border: 3px solid var(--secondary-blue);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 0 var(--secondary-blue);
+            z-index: 1001;
+        }
 
-  @keyframes fadeInDown { from { opacity:0; transform:translateY(-18px); } to { opacity:1; transform:translateY(0); } }
-  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-  @keyframes modalIn { from { opacity:0; transform:scale(0.96) translateY(10px); } to { opacity:1; transform:scale(1) translateY(0); } }
+        #audio-toggle:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--secondary-blue); }
 
-  @media (max-width: 600px) {
-    header { padding: 0 1.2rem; }
-    nav { display: none; }
-    .delivery-box { flex-direction: column; text-align: center; }
-    footer { flex-direction: column; align-items: center; text-align: center; }
-  }
-</style>
+        .floating-text {
+            position: absolute;
+            font-weight: 900;
+            font-size: 28px;
+            color: var(--secondary-blue);
+            pointer-events: none;
+            animation: floatUp 0.8s ease-out forwards;
+            z-index: 1000;
+        }
+
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-120px); } }
+    </style>
 </head>
 <body>
-<div class="scanline"></div>
 
-<header>
-  <div class="logo">
-    JuegosBoti<span class="logo-dot">.</span>Xyz
-    <span class="logo-badge">STORE</span>
-  </div>
-  <nav>
-    <a onclick="openSupport()">Support</a>
-    <a onclick="openCoupons()" class="nav-cta">COUPONS</a>
-  </nav>
-</header>
+    <div id="preloader">
+        <div class="spinner" id="loader-spinner"></div>
+        <div id="loader-text">Loading bobs...</div>
+    </div>
 
-<section class="hero">
-  <p class="hero-eyebrow">// Digital & Physical Products //</p>
-  <h1>Welcome to<br>JuegosBoti.Xyz</h1>
-  <p>Your destination for premium gaming products. Browse our curated selection below.</p>
-</section>
+    <div id="notif-container"></div>
 
-<div class="divider">
-  <div class="divider-line"></div>
-  <div class="divider-icon">◆ Trusted Platform ◆</div>
-  <div class="divider-line"></div>
-</div>
+    <div id="audio-toggle" onclick="toggleMute()">🔊</div>
 
-<section class="products-section">
-  <p class="section-label">// Available Now //</p>
-  <h2 class="section-heading">Product Catalog</h2>
-  
-  <div class="products-scroll-container">
-    <div class="products-grid">
-      <div class="product-card" data-product-id="667825" data-variant-id="1055741" data-price="9.99">
-        <div class="product-img-wrap">
-          <img src="https://static.wikia.nocookie.net/stealabr/images/3/34/Skibidi_toilet.png/revision/latest?cb=20251227221221" alt="Skibidi Toilet">
-          <div class="product-price-tag">75€</div>
+    <div id="game-container">
+        <div id="stats">
+            <h1 id="point-display">0 Goon Points</h1>
+            <div id="pps-display">Points Per Second: 0</div>
         </div>
-        <div class="product-info">
-          <div class="product-title">[STEAL A BRAINROT] Skibidi Toilet</div>
-          <div class="product-desc">Own the iconic Skibidi Toilet from the Steal a Brainrot collection. A must-have for any true brainrot connoisseur.</div>
-          <button type="button" class="sellauth-button" onclick="buyProduct(this)">Buy Now</button>
+
+        <div id="bob-container" onclick="handleBobClick(event)">
+            <img src="https://i.postimg.cc/SKpCCL38/bobesponjita.png" alt="Bob" id="bob-image">
         </div>
-      </div>
     </div>
-  </div>
-</section>
 
-<div class="delivery-banner">
-  <div class="delivery-box">
-    <div class="delivery-icon-wrap">💎</div>
-    <div>
-      <h3>Looking for workers</h3>
-      <p>Recommend the site to your friends or connections and if they <strong style="color:var(--accent)">buy</strong> a product, you will get <strong style="color:var(--accent2)">worker</strong> role, you will get 10% of every purchase a user makes.</p>
-    </div>
-  </div>
-</div>
-
-<footer>
-  <div class="footer-left"><span>JuegosBoti.Xyz</span> &nbsp;·&nbsp; © 2025 All rights reserved</div>
-  <button class="tos-link" onclick="openModal()">Terms of Service</button>
-</footer>
-
-<div class="modal-overlay" id="couponModal">
-  <div class="modal">
-    <div class="modal-header">
-      <div>
-        <h2>COUPONS</h2>
-        <p>DISCOUNT PROTOCOL // ACTIVE</p>
-      </div>
-      <button class="modal-close" onclick="closeCoupons()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="tos-section">
-        <p style="text-align: center; color: var(--text);">Find here your best deals:</p>
-        <div class="coupon-item">
-            <span class="coupon-code">RELEASE</span>
-            <p style="font-size: 0.9rem; color: var(--muted);">2$ off any product.</p>
+    <div id="shop-container">
+        <h2 style="text-align: center; border-bottom: 3px solid var(--secondary-blue); padding-bottom: 10px;">The Goon Vault</h2>
+        
+        <div class="shop-item" onclick="buyUpgrade('clickPower')">
+            <span class="item-name">💪 Stronger Stroke</span>
+            <span class="item-cost" id="cost-clickPower">Cost: 15</span>
+            <p class="item-desc">+1 point per click.</p>
         </div>
-      </div>
-    </div>
-    <div class="modal-footer" style="text-align: center;">
-      <button class="btn-primary" onclick="closeCoupons()" style="width: 100%;">Close</button>
-    </div>
-  </div>
-</div>
 
-<div class="modal-overlay" id="supportModal">
-  <div class="modal">
-    <div class="modal-header">
-      <div>
-        <h2>Support Not Available</h2>
-        <p>NETWORK STATUS // OFFLINE</p>
-      </div>
-      <button class="modal-close" onclick="closeSupport()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="tos-section">
-        <p style="text-align: center; line-height: 1.8;">Our support team cannot reach you at the moment, please try again in another moment.</p>
-      </div>
-    </div>
-    <div class="modal-footer" style="text-align: center;">
-      <button class="btn-primary" onclick="closeSupport()" style="width: 100%;">OK</button>
-    </div>
-  </div>
-</div>
+        <div class="shop-item" onclick="buyUpgrade('clickUltra')">
+            <span class="item-name">🧤 Turbo Goon</span>
+            <span class="item-cost" id="cost-clickUltra">Cost: 250</span>
+            <p class="item-desc">+10 points per click.</p>
+        </div>
 
-<div class="modal-overlay" id="warningModal">
-  <div class="modal">
-    <div class="modal-header">
-      <div>
-        <h2>WARNING</h2>
-        <p>TRANSACTION PROTOCOL // ACTION REQUIRED</p>
-      </div>
-      <button class="modal-close" onclick="closeWarning()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="tos-section">
-        <p style="color: var(--text); font-weight: 600; text-align: center; margin-bottom: 1.5rem;">PLEASE READ CAREFULLY</p>
-        <p style="text-align: center; line-height: 1.8;">
-          By proceeding with this purchase, you formally acknowledge and agree to be bound by the <strong>JuegosBoti.Xyz Terms of Service</strong> in their entirety. 
-          <br><br>
-          This transaction includes your irrevocable acceptance of our <strong>No-Refund Policy</strong> as defined in § 4 of our terms.
-        </p>
-      </div>
-    </div>
-    <div class="modal-footer" style="text-align: center;">
-      <button class="btn-primary" id="confirmPurchaseBtn" style="width: 100%;">I agree that i have read them.</button>
-    </div>
-  </div>
-</div>
+        <div class="shop-item" onclick="buyUpgrade('autoClicker')">
+            <span class="item-name">🤖 Goon Toy</span>
+            <span class="item-cost" id="cost-autoClicker">Cost: 50</span>
+            <p class="item-desc">+1 PPS.</p>
+        </div>
 
-<div class="modal-overlay" id="tosModal">
-  <div class="modal">
-    <div class="modal-header">
-      <div>
-        <h2>Terms of Service</h2>
-        <p>JUEGOSBOTI.XYZ — LAST UPDATED: 2025</p>
-      </div>
-      <button class="modal-close" onclick="closeModal()">✕</button>
+        <div class="shop-item" onclick="buyUpgrade('megaGooner')">
+            <span class="item-name">🌊 Fap Waves</span>
+            <span class="item-cost" id="cost-megaGooner">Cost: 500</span>
+            <p class="item-desc">+12 PPS.</p>
+        </div>
+
+        <div class="shop-item" onclick="buyUpgrade('industrialGoon')">
+            <span class="item-name">🏭 Cum Factory</span>
+            <span class="item-cost" id="cost-industrialGoon">Cost: 2500</span>
+            <p class="item-desc">+50 PPS.</p>
+        </div>
+
+        <div class="shop-item" onclick="buyUpgrade('galacticGoon')">
+            <span class="item-name">🌌 Galactic Jerk Off Portal</span>
+            <span class="item-cost" id="cost-galacticGoon">Cost: 15000</span>
+            <p class="item-desc">+250 PPS.</p>
+        </div>
+
+        <div class="shop-item" onclick="buyBoost()">
+            <span class="item-name">⚡ Hyper Boost (10s)</span>
+            <span class="item-cost" id="cost-boost">Cost: 1000</span>
+            <p class="item-desc">2x Multiplier for 10 seconds.</p>
+        </div>
+
+        <div id="item-skin1945" class="shop-item" onclick="buySkin1945()" style="background: linear-gradient(to right, #fff, #ffeaa7); border: 3px solid #fdcb6e;">
+            <span class="item-name">🎖️ Hitler Bob Skin</span>
+            <span class="item-cost" id="cost-skin1945">Cost: 6700</span>
+            <p class="item-desc" style="color: #d35400; font-weight: bold;">One time payment, fulltime 1945. (+45 Base Click!)</p>
+        </div>
     </div>
-    <div class="modal-body">
-      <div class="tos-section">
-        <h3>§ 1 — Introduction and Acceptance</h3>
-        <p>These Terms of Service ("Terms") constitute a legally binding agreement between you ("Customer," "Buyer," or "User") and JuegosBoti.Xyz ("the Store," "we," "us," or "our") governing your access to and use of our platform and the purchase of any products offered therein. By accessing this website, creating an account, or completing any transaction, you expressly acknowledge that you have read, understood, and agree to be bound by these Terms in their entirety. If you do not agree with any provision herein, you are not authorized to use this platform or engage in any commercial activity through it.</p>
-      </div>
-      <div class="tos-section">
-        <h3>§ 2 — Nature of Products and Delivery Methods</h3>
-        <p>JuegosBoti.Xyz offers products that may be delivered in one of two distinct modalities, as determined exclusively by the nature of each individual product listed on our platform:</p>
-        <p style="margin-top:1rem"><strong style="color:var(--accent)">2.1 — Digital Image Delivery:</strong> Certain products available through JuegosBoti.Xyz are classified as digital in nature. These products shall be delivered to the Customer in the form of a digital image or digital file, transmitted electronically through the means specified at the time of purchase. The digital image constitutes the complete and final form of the purchased product. Upon successful electronic transmission, the delivery obligation of JuegosBoti.Xyz shall be considered fulfilled in its entirety.</p>
-        <p style="margin-top:1rem"><strong style="color:var(--accent2)">2.2 — Physical Image Delivery:</strong> Certain products available through JuegosBoti.Xyz are classified as physical in nature. These products shall be delivered to the Customer in the form of a tangible, physical image or printed material, dispatched via a shipping or postal carrier to the physical address provided by the Customer at the time of purchase. Delivery timelines are subject to the policies and operational capacity of the selected carrier.</p>
-        <p style="margin-top:1rem"><strong>2.3 — Determination of Delivery Method:</strong> The applicable delivery method is determined solely by the nature and classification of each specific product as indicated on its respective product listing page. The Customer acknowledges that the delivery method is disclosed prior to the completion of any purchase.</p>
-      </div>
-      <div class="tos-section">
-        <h3>§ 3 — Scope of Delivery Obligation</h3>
-        <p>The sole and complete obligation of JuegosBoti.Xyz with respect to any product sold through this platform is the delivery of said product — whether in digital or physical image form — as described in Section 2 above. No warranties, guarantees, or representations are made beyond those expressly stated in the relevant product listing. The Customer expressly acknowledges that the product delivered constitutes the entirety of what was purchased and that no additional goods, services, licenses, or entitlements are implied or included unless explicitly stated in writing at the time of sale.</p>
-      </div>
-      <div class="tos-section">
-        <h3>§ 4 — No Refund Policy</h3>
-        <p>ALL SALES ARE FINAL. JuegosBoti.Xyz operates a strict and unconditional no-refund policy with respect to all products sold through this platform, without exception. By completing a purchase, the Customer expressly acknowledges and irrevocably agrees that no refund, reversal, exchange, credit, or compensation of any kind shall be issued under any circumstance whatsoever, including but not limited to: dissatisfaction with the product, accidental or mistaken purchase, change of mind, failure to read the product description prior to purchase, technical difficulties on the Customer's end, or any other reason of any nature. The Customer accepts full and sole responsibility for reviewing all product information — including the delivery method, product description, and applicable variant — prior to finalizing any transaction. JuegosBoti.Xyz shall bear absolutely no obligation to process, consider, or respond to any refund request submitted after a purchase has been completed. By proceeding with any purchase on this platform, the Customer unequivocally and permanently waives any and all claims to a refund, chargeback, or reversal of payment. Attempts to initiate unauthorized chargebacks or payment disputes in contradiction of this policy may result in permanent restriction of access to this platform.</p>
-      </div>
-      <div class="tos-section">
-        <h3>§ 5 — Customer Responsibilities</h3>
-        <p>The Customer bears full responsibility for providing accurate and complete delivery information prior to finalizing any purchase. In the case of digital delivery, this includes ensuring the accuracy of the designated electronic address. In the case of physical delivery, this includes providing a complete, valid, and accessible postal address. JuegosBoti.Xyz shall not be held liable for failed, delayed, or misdirected deliveries resulting from inaccurate or incomplete information provided by the Customer.</p>
-      </div>
-      <div class="tos-section">
-        <h3>§ 6 — Modifications to Terms</h3>
-        <p>JuegosBoti.Xyz reserves the right to amend, update, or otherwise modify these Terms of Service at any time and at its sole discretion. Any such modifications shall become effective upon their publication on this platform. Continued use of the platform following any such modification shall constitute the Customer's acceptance of the revised Terms.</p>
-      </div>
-      <div class="tos-section">
-        <h3>§ 7 — Contact and Disputes</h3>
-        <p>Should any question or concern arise in connection with the delivery of a product purchased through JuegosBoti.Xyz, the Customer is encouraged to contact our support team through the official channels provided on this platform. JuegosBoti.Xyz is committed to resolving all legitimate concerns in a timely and professional manner, in accordance with these Terms and applicable regulations. For the avoidance of doubt, delivery-related inquiries shall not constitute grounds for a refund request, as all sales remain final pursuant to Section 4 of these Terms.</p>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-primary" onclick="closeModal()" style="font-size:0.75rem;padding:10px 28px;">I Understand</button>
-    </div>
-  </div>
-</div>
 
-<script>
-  const SHOP_ID = 227377;
-  let pendingPurchase = null;
+    <script>
+        let state = {
+            points: 0,
+            clickPower: 1,
+            autoPPS: 0,
+            boostActive: false,
+            skinOwned: false,
+            muted: false,
+            costs: {
+                clickPower: 15, clickUltra: 250,
+                autoClicker: 50, megaGooner: 500,
+                industrialGoon: 2500, galacticGoon: 15000,
+                boost: 1000, skin1945: 6700
+            }
+        };
 
-  function buyProduct(btn) {
-    const card = btn.closest('[data-product-id]');
-    const productId = parseInt(card.dataset.productId);
-    const variantId = parseInt(card.dataset.variantId);
-    pendingPurchase = { productId, variantId, btn };
-    openWarning();
-  }
+        const IMG_URL_1945 = "https://i.postimg.cc/jqJ8Hckg/8qfyuc.jpg";
 
-  document.getElementById('confirmPurchaseBtn').onclick = function() {
-    if (pendingPurchase) {
-      window.sellAuthEmbed.checkout(pendingPurchase.btn, {
-        cart: [{ 
-            productId: pendingPurchase.productId, 
-            variantId: pendingPurchase.variantId, 
-            quantity: 1 
-        }],
-        shopId: SHOP_ID,
-        modal: true
-      });
-      closeWarning();
-    }
-  };
+        // --- NOTIFICATIONS ---
+        function notify(msg, type = '') {
+            const container = document.getElementById('notif-container');
+            const n = document.createElement('div');
+            n.className = `notif ${type}`;
+            n.innerText = msg;
+            container.appendChild(n);
+            setTimeout(() => n.remove(), 3000);
+        }
 
-  function openWarning() { document.getElementById('warningModal').classList.add('open'); document.body.style.overflow = 'hidden'; }
-  function closeWarning() { document.getElementById('warningModal').classList.remove('open'); document.body.style.overflow = ''; pendingPurchase = null; }
-  function openSupport() { document.getElementById('supportModal').classList.add('open'); document.body.style.overflow = 'hidden'; }
-  function closeSupport() { document.getElementById('supportModal').classList.remove('open'); document.body.style.overflow = ''; }
-  function openModal() { document.getElementById('tosModal').classList.add('open'); document.body.style.overflow = 'hidden'; }
-  function closeModal() { document.getElementById('tosModal').classList.remove('open'); document.body.style.overflow = ''; }
-  function openCoupons() { document.getElementById('couponModal').classList.add('open'); document.body.style.overflow = 'hidden'; }
-  function closeCoupons() { document.getElementById('couponModal').classList.remove('open'); document.body.style.overflow = ''; }
+        // --- AUDIO ---
+        function toggleMute() {
+            state.muted = !state.muted;
+            document.getElementById('audio-toggle').innerText = state.muted ? "🔇" : "🔊";
+            notify(state.muted ? "Sound Muted" : "Sound Enabled");
+        }
 
-  window.addEventListener('click', function(e) {
-    if (e.target.classList.contains('modal-overlay')) {
-      closeModal(); closeWarning(); closeSupport(); closeCoupons();
-    }
-  });
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-      closeModal(); closeWarning(); closeSupport(); closeCoupons();
-    }
-  });
-</script>
+        function playSfx(freq, type = 'sine') {
+            if (state.muted) return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const g = ctx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.15);
+                osc.connect(g); g.connect(ctx.destination);
+                osc.start(); osc.stop(ctx.currentTime + 0.15);
+            } catch(e) {}
+        }
+
+        // --- PRELOADER ---
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader-spinner').style.display = 'none';
+                const lt = document.getElementById('loader-text');
+                lt.innerText = "✅ Loaded!";
+                lt.classList.add('loaded-status');
+                setTimeout(() => {
+                    document.getElementById('preloader').style.opacity = '0';
+                    setTimeout(() => document.getElementById('preloader').style.display = 'none', 600);
+                }, 700);
+            }, 1800);
+        });
+
+        function refreshUI() {
+            const mult = state.boostActive ? 2 : 1;
+            document.getElementById('point-display').innerText = `${Math.floor(state.points)} Goon Points`;
+            document.getElementById('pps-display').innerText = `Points Per Second: ${Math.floor(state.autoPPS * mult)}`;
+
+            for (let key in state.costs) {
+                const el = document.getElementById(`cost-${key}`);
+                if (el) el.innerText = `Cost: ${Math.floor(state.costs[key])}`;
+            }
+
+            if (state.skinOwned) {
+                const skinBtn = document.getElementById('item-skin1945');
+                skinBtn.classList.add('disabled');
+                document.getElementById('cost-skin1945').innerText = "OWNED";
+                document.getElementById('bob-image').src = IMG_URL_1945;
+            }
+
+            localStorage.setItem('goonerBobSave_final_v4', JSON.stringify(state));
+        }
+
+        function handleBobClick(e) {
+            const mult = state.boostActive ? 2 : 1;
+            const base = state.skinOwned ? 45 : 1;
+            const totalGain = (base + (state.clickPower - 1)) * mult;
+
+            state.points += totalGain;
+            
+            const container = document.getElementById('bob-container');
+            container.classList.remove('bounce-effect');
+            void container.offsetWidth;
+            container.classList.add('bounce-effect');
+
+            const ft = document.createElement('div');
+            ft.className = 'floating-text';
+            ft.innerText = `+${totalGain}`;
+            ft.style.left = `${e.clientX}px`;
+            ft.style.top = `${e.clientY}px`;
+            document.body.appendChild(ft);
+            setTimeout(() => ft.remove(), 800);
+
+            playSfx(400);
+            refreshUI();
+        }
+
+        function buyUpgrade(type) {
+            if (state.points >= state.costs[type]) {
+                state.points -= state.costs[type];
+                if (type === 'clickPower') { state.clickPower += 1; state.costs.clickPower *= 1.5; }
+                else if (type === 'clickUltra') { state.clickPower += 10; state.costs.clickUltra *= 1.6; }
+                else if (type === 'autoClicker') { state.autoPPS += 1; state.costs.autoClicker *= 1.35; }
+                else if (type === 'megaGooner') { state.autoPPS += 12; state.costs.megaGooner *= 1.35; }
+                else if (type === 'industrialGoon') { state.autoPPS += 50; state.costs.industrialGoon *= 1.4; }
+                else if (type === 'galacticGoon') { state.autoPPS += 250; state.costs.galacticGoon *= 1.4; }
+                playSfx(600, 'triangle');
+                notify("Upgrade Purchased!", "success");
+                refreshUI();
+            } else {
+                notify("Not enough Goon Points!", "error");
+                playSfx(150, 'sawtooth');
+            }
+        }
+
+        function buySkin1945() {
+            if (state.skinOwned) return;
+            if (state.points >= state.costs.skin1945) {
+                state.points -= state.costs.skin1945;
+                state.skinOwned = true;
+                playSfx(200, 'sawtooth');
+                notify("LEGENDARY SKIN UNLOCKED!", "success");
+                refreshUI();
+            } else {
+                notify("Insufficient funds for 1945!", "error");
+                playSfx(150, 'sawtooth');
+            }
+        }
+
+        function buyBoost() {
+            if (state.boostActive) {
+                notify("Boost already active!", "error");
+                return;
+            }
+            if (state.points >= state.costs.boost) {
+                state.points -= state.costs.boost;
+                state.boostActive = true;
+                playSfx(800, 'square');
+                notify("HYPER BOOST ACTIVATED!", "success");
+                
+                let time = 10;
+                const bText = document.getElementById('cost-boost');
+                const timer = setInterval(() => {
+                    time--;
+                    bText.innerText = `ACTIVE (${time}s)`;
+                    if(time <= 0) {
+                        clearInterval(timer);
+                        state.boostActive = false;
+                        notify("Boost Expired");
+                        refreshUI();
+                    }
+                }, 1000);
+            } else {
+                notify("Need more points for Boost!", "error");
+            }
+        }
+
+        setInterval(() => {
+            const mult = state.boostActive ? 2 : 1;
+            if (state.autoPPS > 0) {
+                state.points += (state.autoPPS * mult) / 10;
+                refreshUI();
+            }
+        }, 100);
+
+        const savedData = localStorage.getItem('goonerBobSave_final_v4');
+        if (savedData) {
+            const parsed = JSON.parse(savedData);
+            state = { ...state, ...parsed };
+            state.boostActive = false;
+        }
+        refreshUI();
+    </script>
 </body>
 </html>
